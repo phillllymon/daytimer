@@ -1,26 +1,28 @@
 import {
     vectorMag,
     getUnitVector,
-    getHeadingDeg
+    getHeadingDeg,
+    toRadians
 } from '../util/vector_util';
 
 class Boat {
     constructor(){
         this.rudderAngle = 0;
         this.position = [400, 300];
-        this.sailAngle = -45;
+        this.sailAngle = 0;
         this.rudderSpeed = 100; //      deg/second
         this.turningSpeed = 2;  //      deg/second/rudder/degree
         this.heading = 0;
         this.speed = 0;
         this.maxSpeed = 40;        //      pixels/second
-        this.mainSheetPos = 45; //      max |angle| of sail
+        this.mainSheetPos = 0; //      max |angle| of sail
         this.trimmingSpeed = 30 //      deg/second
-        this.maxSheetAngle = 100;
+        this.maxSheetAngle = 180;
         this.sailCd = 5;
         this.sailCl = 9;
         this.appWindDir = [0, 0];
         this.appWindSpeed = 0;
+        this.appWindVel = [0, 0];
     }
 
     pushRudder(dt, dir) {
@@ -62,7 +64,7 @@ class Boat {
     }
 
     calculateSpeed() {
-        //return 10;
+        return 10;
         let maxSpeed = this.maxSpeed;
         let speedAngle = this.heading < 180 ?
         this.heading :
@@ -91,12 +93,18 @@ class Boat {
     }
 
     updateSailAngle(dt) {
-        let windDir = 0;
-        this.sailAngle = this.heading < 180 ? this.heading : this.heading - 360;
+        let windHeading = getHeadingDeg(this.appWindDir);
+        
+
+        this.sailAngle = Math.abs(180 - windHeading + this.heading);
+        /////////DOES NOT WORK ON STARBOARD TACK!!!!! :(
+
         if (Math.abs(this.sailAngle) > this.mainSheetPos) {
+            
             this.sailAngle = this.heading < 180 ? 
             this.mainSheetPos : 
             this.mainSheetPos * -1;
+            console.log(this.sailAngle);
         }
     }
 
@@ -107,20 +115,36 @@ class Boat {
         let radTrueWind = (windHeading - 180) * Math.PI/180;
         let trueDir = [Math.sin(radTrueWind), -Math.cos(radTrueWind)];
         let trueVel = [trueDir[0] * windSpeed, trueDir[1] * windSpeed];
-        let appWindVel = [trueVel[0] - boatVel[0], trueVel[1] - boatVel[1]];
-        this.appWindDir = getUnitVector(appWindVel);
-        this.appWindSpeed = vectorMag(appWindVel);
-        return appWindVel;
+        this.appWindVel = [trueVel[0] - boatVel[0], trueVel[1] - boatVel[1]];
+        this.appWindDir = getUnitVector(this.appWindVel);
+        this.appWindSpeed = vectorMag(this.appWindVel);
+        
+        return this.appWindVel;
     }
 
     calculateForceOnSail(appWindVel) {
+        
+    }
+
+    calculateDragOnSail() {
         let absSailAngle = this.heading - this.sailAngle;
-        let radAbsSailAngle = absSailAngle * Math.PI/180;
+        let radAbsSailAngle = absSailAngle * Math.PI / 180;
         let absSailDir = [-Math.sin(radAbsSailAngle), Math.cos(radAbsSailAngle)];
 
-        let absAppDir = getUnitVector(appWindVel);
+        let absAppDir = getUnitVector(this.appWindVel);
         let appWindHeading = getHeadingDeg(absAppDir);
         let sailHeading = getHeadingDeg(absSailDir);
+        let angleOfAttack = Math.abs(appWindHeading - sailHeading);
+        let attackRad = toRadians(angleOfAttack);
+        let sailDragMag = this.sailCd * (this.appWindSpeed * this.appWindSpeed) * Math.sin(attackRad);
+        let dragVector = [sailDragMag * absAppDir[0], sailDragMag * absAppDir[1]];
+
+        this.angleOfAttack = angleOfAttack;
+        return dragVector;
+    }
+
+    calculateLiftOnSail() {
+
     }
 
 }

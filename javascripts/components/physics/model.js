@@ -2,6 +2,7 @@ class Model {
     constructor(boat, windMap){
         this.boat = boat;
         this.windMap = windMap;
+        this.dragOnSail = [0, 0];
     }
 
     update(inputs, dt) {
@@ -20,14 +21,14 @@ class Model {
         }
 
         this.windMap.updateWaves(dt);
+
+        this.boat.calculateAppWind(this.windMap.windHeading, this.windMap.windSpeed);
+        this.dragOnSail = this.boat.calculateDragOnSail();
+        
         this.boat.updatePosition(dt);
         this.boat.updateHeading(dt);
         this.boat.updateSailAngle(dt);
-        let appWind = this.boat.calculateAppWind(
-            this.windMap.windHeading, 
-            this.windMap.windSpeed
-            );
-        this.boat.calculateForceOnSail(appWind);
+        
     };
 }
 

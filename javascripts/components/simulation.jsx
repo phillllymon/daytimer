@@ -13,8 +13,7 @@ class Simulation extends React.Component {
         this.windMap = new WindMap(800, 600);
         this.model = new Model(new Boat, this.windMap);
         this.state = {
-            boat: this.model.boat,
-            windMap: this.windMap
+            model: this.model
         }
         this.startSimulation = this.startSimulation.bind(this);
         this.mainLoop = this.mainLoop.bind(this);
@@ -39,7 +38,7 @@ class Simulation extends React.Component {
 
         this.model.update(this.inputManager.inputs, dt);
         this.setState({
-            boat: this.model.boat
+            model: this.model
         });
 
         this.lastTime = Date.now();
@@ -50,17 +49,25 @@ class Simulation extends React.Component {
         return (
             <div style={{'display' : 'flex'}}>
                 <TopDiagram   
-                    boat={this.state.boat}
+                    boat={this.state.model.boat}
                 />
                 <MainDisplay
-                    boat={this.state.boat}
-                    windMap={this.state.windMap}
+                    model={this.state.model}
+                    boat={this.state.model.boat}
+                    windMap={this.state.model.windMap}
                 />
-                heading: {Math.round(this.state.boat.heading)}
+                heading: {Math.round(this.state.model.boat.heading)}
                 <br/>
-                speed: {Math.round(this.state.boat.speed)}
+                speed: {Math.round(this.state.model.boat.speed)}
                 <br />
-                windspeed: {Math.round(this.state.windMap.windSpeed)}
+                windspeed: {Math.round(this.state.model.windMap.windSpeed)}
+                <br />
+                dragOnSail: x: {Math.round(this.state.model.dragOnSail[0])}
+                y: {Math.round(this.state.model.dragOnSail[1])}
+                <br />
+                angle of attack: {Math.round(this.state.model.boat.angleOfAttack)}
+                <br />
+                sailAngle: {Math.round(this.state.model.boat.sailAngle)}
             </div>
         );
     }

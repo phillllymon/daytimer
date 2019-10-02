@@ -97,6 +97,7 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _util_vector_util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../util/vector_util */ "./javascripts/components/util/vector_util.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -114,6 +115,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -142,7 +144,7 @@ function (_React$Component) {
   }, {
     key: "clearDisplay",
     value: function clearDisplay() {
-      this.ctx.fillStyle = 'lightblue';
+      this.ctx.fillStyle = 'darkblue';
       this.ctx.fillRect(0, 0, 800, 600, 'lightblue');
     }
   }, {
@@ -154,18 +156,30 @@ function (_React$Component) {
   }, {
     key: "drawBoat",
     value: function drawBoat() {
+      var model = this.props.model;
       var boat = this.props.boat;
       var pos = boat.position;
       var dir = boat.heading * Math.PI / 180;
       var windMap = this.props.windMap;
-      var ctx = this.ctx;
+      var ctx = this.ctx; //display waves
+
       windMap.waves.forEach(function (row) {
         row.forEach(function (wave) {
-          ctx.strokeStyle = 'blue';
+          ctx.strokeStyle = 'blue'; // if (wave.stage > 8){
+          //     ctx.strokeStyle = 'lightblue';
+          // }
+          // else {
+          //     ctx.strokeStyle = 'blue';
+          // }
+
           ctx.lineWidth = 1;
           ctx.beginPath();
-          ctx.moveTo(wave[0], wave[1]);
-          ctx.lineTo(wave[0] + 10, wave[1]);
+          ctx.moveTo(wave.pos[0], wave.pos[1]);
+          var widthFactor = wave.stage < 12 ? wave.stage : 17 - 2 * wave.stage; //let widthFactor = wave.stage;
+
+          ctx.lineTo(wave.pos[0] + (1 * widthFactor + 2), wave.pos[1]);
+          ctx.moveTo(wave.pos[0], wave.pos[1]);
+          ctx.lineTo(wave.pos[0] - (1 * widthFactor + 2), wave.pos[1]);
           ctx.stroke();
         });
       });
@@ -192,35 +206,43 @@ function (_React$Component) {
       ctx.lineTo(boomEndpoint[0], boomEndpoint[1]);
       ctx.stroke();
       ctx.rotate(-dir); //display app wind arrow
+      // let appDir = boat.appWindDir;
+      // let appSpeed = boat.appWindSpeed;
+      // ctx.beginPath();
+      // ctx.lineWidth = 3;
+      // ctx.moveTo(40*appDir[0], 40*appDir[1]);
+      // ctx.lineTo((40 + appSpeed)*appDir[0], (40 + appSpeed)*appDir[1]);
+      // ctx.stroke();
+      //display wind drag arrow
+      // let dragDir = appDir;
+      // let dragSpeed = 20;
+      // ctx.beginPath();
+      // ctx.strokeStyle = 'blue';
+      // ctx.moveTo(60*appDir[0], 60*appDir[1]);
+      // ctx.lineTo((60 + dragSpeed) * dragDir[0], (60 + dragSpeed) * dragDir[1]);
+      // ctx.stroke();
+      //display wind lift arrow
+      // let liftDir = [-dragDir[1], dragDir[0]];
+      // if (dragDir[0] < 0) {
+      //     liftDir = [dragDir[1], -dragDir[0]];
+      // }
+      // let liftSpeed = 20;
+      // ctx.beginPath();
+      // ctx.strokeStyle = 'green';
+      // ctx.moveTo(60 * liftDir[0], 60 * liftDir[1]);
+      // ctx.lineTo((60 + liftSpeed) * liftDir[0], (60 + liftSpeed) * liftDir[1]);
+      // ctx.stroke();
+      //display sailDrag arrow
 
-      var appDir = boat.appWindDir;
-      var appSpeed = boat.appWindSpeed;
+      var dragVec = model.dragOnSail;
+      var dragDir = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["getUnitVector"])(dragVec);
+      var dragMag = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["vectorMag"])(dragVec) / 500;
       ctx.beginPath();
-      ctx.lineWidth = 3;
-      ctx.moveTo(40 * appDir[0], 40 * appDir[1]);
-      ctx.lineTo((40 + appSpeed) * appDir[0], (40 + appSpeed) * appDir[1]);
-      ctx.stroke(); //display wind drag arrow
+      ctx.strokeStyle = 'orange';
+      ctx.moveTo(80 * dragDir[0], 80 * dragDir[1]);
+      ctx.lineTo((80 + dragMag) * dragDir[0], (80 + dragMag) * dragDir[1]);
+      ctx.stroke(); //no worky
 
-      var dragDir = appDir;
-      var dragSpeed = 20;
-      ctx.beginPath();
-      ctx.strokeStyle = 'blue';
-      ctx.moveTo(60 * appDir[0], 60 * appDir[1]);
-      ctx.lineTo((60 + dragSpeed) * dragDir[0], (60 + dragSpeed) * dragDir[1]);
-      ctx.stroke(); //display wind lift arrow
-
-      var liftDir = [-dragDir[1], dragDir[0]];
-
-      if (dragDir[0] < 0) {
-        liftDir = [dragDir[1], -dragDir[0]];
-      }
-
-      var liftSpeed = 20;
-      ctx.beginPath();
-      ctx.strokeStyle = 'green';
-      ctx.moveTo(60 * liftDir[0], 60 * liftDir[1]);
-      ctx.lineTo((60 + liftSpeed) * liftDir[0], (60 + liftSpeed) * liftDir[1]);
-      ctx.stroke();
       ctx.translate(-pos[0], -pos[1]); //display true wind
 
       var trueVec = windMap.getWindVector();
@@ -349,7 +371,7 @@ function () {
 
     this.rudderAngle = 0;
     this.position = [400, 300];
-    this.sailAngle = -45;
+    this.sailAngle = 0;
     this.rudderSpeed = 100; //      deg/second
 
     this.turningSpeed = 2; //      deg/second/rudder/degree
@@ -358,15 +380,16 @@ function () {
     this.speed = 0;
     this.maxSpeed = 40; //      pixels/second
 
-    this.mainSheetPos = 45; //      max |angle| of sail
+    this.mainSheetPos = 0; //      max |angle| of sail
 
     this.trimmingSpeed = 30; //      deg/second
 
-    this.maxSheetAngle = 100;
+    this.maxSheetAngle = 180;
     this.sailCd = 5;
     this.sailCl = 9;
     this.appWindDir = [0, 0];
     this.appWindSpeed = 0;
+    this.appWindVel = [0, 0];
   }
 
   _createClass(Boat, [{
@@ -417,7 +440,7 @@ function () {
   }, {
     key: "calculateSpeed",
     value: function calculateSpeed() {
-      //return 10;
+      return 10;
       var maxSpeed = this.maxSpeed;
       var speedAngle = this.heading < 180 ? this.heading : this.heading - 2 * (this.heading - 180);
 
@@ -444,11 +467,12 @@ function () {
   }, {
     key: "updateSailAngle",
     value: function updateSailAngle(dt) {
-      var windDir = 0;
-      this.sailAngle = this.heading < 180 ? this.heading : this.heading - 360;
+      var windHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getHeadingDeg"])(this.appWindDir);
+      this.sailAngle = Math.abs(180 - windHeading + this.heading); /////////DOES NOT WORK ON STARBOARD TACK!!!!! :(
 
       if (Math.abs(this.sailAngle) > this.mainSheetPos) {
         this.sailAngle = this.heading < 180 ? this.mainSheetPos : this.mainSheetPos * -1;
+        console.log(this.sailAngle);
       }
     }
   }, {
@@ -460,21 +484,33 @@ function () {
       var radTrueWind = (windHeading - 180) * Math.PI / 180;
       var trueDir = [Math.sin(radTrueWind), -Math.cos(radTrueWind)];
       var trueVel = [trueDir[0] * windSpeed, trueDir[1] * windSpeed];
-      var appWindVel = [trueVel[0] - boatVel[0], trueVel[1] - boatVel[1]];
-      this.appWindDir = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getUnitVector"])(appWindVel);
-      this.appWindSpeed = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["vectorMag"])(appWindVel);
-      return appWindVel;
+      this.appWindVel = [trueVel[0] - boatVel[0], trueVel[1] - boatVel[1]];
+      this.appWindDir = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getUnitVector"])(this.appWindVel);
+      this.appWindSpeed = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["vectorMag"])(this.appWindVel);
+      return this.appWindVel;
     }
   }, {
     key: "calculateForceOnSail",
-    value: function calculateForceOnSail(appWindVel) {
+    value: function calculateForceOnSail(appWindVel) {}
+  }, {
+    key: "calculateDragOnSail",
+    value: function calculateDragOnSail() {
       var absSailAngle = this.heading - this.sailAngle;
       var radAbsSailAngle = absSailAngle * Math.PI / 180;
       var absSailDir = [-Math.sin(radAbsSailAngle), Math.cos(radAbsSailAngle)];
-      var absAppDir = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getUnitVector"])(appWindVel);
+      var absAppDir = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getUnitVector"])(this.appWindVel);
       var appWindHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getHeadingDeg"])(absAppDir);
       var sailHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getHeadingDeg"])(absSailDir);
+      var angleOfAttack = Math.abs(appWindHeading - sailHeading);
+      var attackRad = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(angleOfAttack);
+      var sailDragMag = this.sailCd * (this.appWindSpeed * this.appWindSpeed) * Math.sin(attackRad);
+      var dragVector = [sailDragMag * absAppDir[0], sailDragMag * absAppDir[1]];
+      this.angleOfAttack = angleOfAttack;
+      return dragVector;
     }
+  }, {
+    key: "calculateLiftOnSail",
+    value: function calculateLiftOnSail() {}
   }]);
 
   return Boat;
@@ -507,6 +543,7 @@ function () {
 
     this.boat = boat;
     this.windMap = windMap;
+    this.dragOnSail = [0, 0];
   }
 
   _createClass(Model, [{
@@ -529,11 +566,11 @@ function () {
       }
 
       this.windMap.updateWaves(dt);
+      this.boat.calculateAppWind(this.windMap.windHeading, this.windMap.windSpeed);
+      this.dragOnSail = this.boat.calculateDragOnSail();
       this.boat.updatePosition(dt);
       this.boat.updateHeading(dt);
       this.boat.updateSailAngle(dt);
-      var appWind = this.boat.calculateAppWind(this.windMap.windHeading, this.windMap.windSpeed);
-      this.boat.calculateForceOnSail(appWind);
     }
   }]);
 
@@ -541,6 +578,25 @@ function () {
 }();
 
 /* harmony default export */ __webpack_exports__["default"] = (Model);
+
+/***/ }),
+
+/***/ "./javascripts/components/physics/wind_config.js":
+/*!*******************************************************!*\
+  !*** ./javascripts/components/physics/wind_config.js ***!
+  \*******************************************************/
+/*! exports provided: windConfig */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "windConfig", function() { return windConfig; });
+var windConfig = {
+  numWaveStages: 18,
+  timeWaveStage: 0.05,
+  //seconds
+  numWaves: 400
+};
 
 /***/ }),
 
@@ -554,11 +610,13 @@ function () {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util_vector_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/vector_util */ "./javascripts/components/util/vector_util.js");
+/* harmony import */ var _wind_config__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./wind_config */ "./javascripts/components/physics/wind_config.js");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
 
 
 
@@ -578,20 +636,29 @@ function () {
   _createClass(WindMap, [{
     key: "generateWaves",
     value: function generateWaves() {
-      var numCols = this.width / 15;
-      var numRows = this.height / 15;
-      var waves = [];
+      // let numCols = this.width/15;
+      // let numRows = this.height/15;
+      // let waves = [];
+      // for (let i = 0; i < numRows; i++) {
+      //     let row = [];
+      //     for (let j = 0; j < numCols; j++) {
+      //         let xCoord = 15 * j + ((Math.random() - 0.5) * 10);
+      //         let yCoord = 15 * i + ((Math.random() - 0.5) * 10);
+      //         row.push([xCoord, yCoord]);
+      //     }
+      //     waves.push(row);
+      // }
+      // return waves;
+      var waves = [[]];
 
-      for (var i = 0; i < numRows; i++) {
-        var row = [];
-
-        for (var j = 0; j < numCols; j++) {
-          var xCoord = 15 * j + (Math.random() - 0.5) * 10;
-          var yCoord = 15 * i + (Math.random() - 0.5) * 10;
-          row.push([xCoord, yCoord]);
-        }
-
-        waves.push(row);
+      for (var i = 0; i < _wind_config__WEBPACK_IMPORTED_MODULE_1__["windConfig"].numWaves; i++) {
+        var xCoord = this.width * Math.random();
+        var yCoord = this.height * Math.random();
+        var newWave = {};
+        newWave.pos = [xCoord, yCoord];
+        newWave.timeToNextStage = _wind_config__WEBPACK_IMPORTED_MODULE_1__["windConfig"].timeWaveStage * Math.random();
+        newWave.stage = Math.floor(_wind_config__WEBPACK_IMPORTED_MODULE_1__["windConfig"].numWaveStages * Math.random());
+        waves[0].push(newWave);
       }
 
       return waves;
@@ -601,13 +668,23 @@ function () {
     value: function updateWaves(dt) {
       var _this = this;
 
-      var height = this.height;
       this.waves.forEach(function (row) {
         row.forEach(function (wave) {
-          wave[1] += dt * _this.windSpeed / 2;
+          wave.pos[1] += _this.windSpeed * dt;
+          wave.timeToNextStage -= dt;
 
-          if (wave[1] > height) {
-            wave[1] = 0;
+          if (wave.timeToNextStage < 0) {
+            wave.stage += 1;
+
+            if (wave.stage >= _wind_config__WEBPACK_IMPORTED_MODULE_1__["windConfig"].numWaveStages) {
+              var xCoord = _this.width * Math.random();
+              var yCoord = _this.height * Math.random();
+              wave.pos = [xCoord, yCoord];
+              wave.timeToNextStage = _wind_config__WEBPACK_IMPORTED_MODULE_1__["windConfig"].timeWaveStage;
+              wave.stage = 0;
+            }
+
+            wave.timeToNextStage = _wind_config__WEBPACK_IMPORTED_MODULE_1__["windConfig"].timeWaveStage;
           }
         });
       });
@@ -714,8 +791,7 @@ function (_React$Component) {
     _this.windMap = new _physics_wind_map__WEBPACK_IMPORTED_MODULE_6__["default"](800, 600);
     _this.model = new _physics_model__WEBPACK_IMPORTED_MODULE_4__["default"](new _physics_boat__WEBPACK_IMPORTED_MODULE_5__["default"](), _this.windMap);
     _this.state = {
-      boat: _this.model.boat,
-      windMap: _this.windMap
+      model: _this.model
     };
     _this.startSimulation = _this.startSimulation.bind(_assertThisInitialized(_this));
     _this.mainLoop = _this.mainLoop.bind(_assertThisInitialized(_this));
@@ -745,7 +821,7 @@ function (_React$Component) {
       var dt = (Date.now() - this.lastTime) / 1000;
       this.model.update(this.inputManager.inputs, dt);
       this.setState({
-        boat: this.model.boat
+        model: this.model
       });
       this.lastTime = Date.now();
       window.requestAnimationFrame(this.mainLoop);
@@ -758,11 +834,12 @@ function (_React$Component) {
           'display': 'flex'
         }
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_display_top_diagram__WEBPACK_IMPORTED_MODULE_1__["default"], {
-        boat: this.state.boat
+        boat: this.state.model.boat
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_display_main_display__WEBPACK_IMPORTED_MODULE_2__["default"], {
-        boat: this.state.boat,
-        windMap: this.state.windMap
-      }), "heading: ", Math.round(this.state.boat.heading), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "speed: ", Math.round(this.state.boat.speed), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "windspeed: ", Math.round(this.state.windMap.windSpeed));
+        model: this.state.model,
+        boat: this.state.model.boat,
+        windMap: this.state.model.windMap
+      }), "heading: ", Math.round(this.state.model.boat.heading), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "speed: ", Math.round(this.state.model.boat.speed), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "windspeed: ", Math.round(this.state.model.windMap.windSpeed), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "dragOnSail: x: ", Math.round(this.state.model.dragOnSail[0]), "y: ", Math.round(this.state.model.dragOnSail[1]), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "angle of attack: ", Math.round(this.state.model.boat.angleOfAttack), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "sailAngle: ", Math.round(this.state.model.boat.sailAngle));
     }
   }]);
 
