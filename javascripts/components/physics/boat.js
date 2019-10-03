@@ -15,9 +15,9 @@ class Boat {
         this.heading = 0;
         this.speed = 0;
         this.maxSpeed = 40;        //      pixels/second
-        this.mainSheetPos = 0; //      max |angle| of sail
+        this.mainSheetPos = 20; //      max |angle| of sail
         this.trimmingSpeed = 30 //      deg/second
-        this.maxSheetAngle = 180;
+        this.maxSheetAngle = 100;
         this.sailCd = 5;
         this.sailCl = 9;
         this.appWindDir = [0, 0];
@@ -64,7 +64,7 @@ class Boat {
     }
 
     calculateSpeed() {
-        return 10;
+        return 20;
         let maxSpeed = this.maxSpeed;
         let speedAngle = this.heading < 180 ?
         this.heading :
@@ -94,17 +94,17 @@ class Boat {
 
     updateSailAngle(dt) {
         let windHeading = getHeadingDeg(this.appWindDir);
-        
 
         this.sailAngle = Math.abs(180 - windHeading + this.heading);
-        /////////DOES NOT WORK ON STARBOARD TACK!!!!! :(
+        if (this.sailAngle > 180){
+            this.sailAngle = this.sailAngle - 360;
+        }
 
         if (Math.abs(this.sailAngle) > this.mainSheetPos) {
             
             this.sailAngle = this.heading < 180 ? 
             this.mainSheetPos : 
             this.mainSheetPos * -1;
-            console.log(this.sailAngle);
         }
     }
 

@@ -145,7 +145,7 @@ function (_React$Component) {
     key: "clearDisplay",
     value: function clearDisplay() {
       this.ctx.fillStyle = 'darkblue';
-      this.ctx.fillRect(0, 0, 800, 600, 'lightblue');
+      this.ctx.fillRect(0, 0, 800, 600);
     }
   }, {
     key: "drawModel",
@@ -281,6 +281,7 @@ function (_React$Component) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _util_vector_util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../util/vector_util */ "./javascripts/components/util/vector_util.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -301,40 +302,143 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
 var TopDiagram =
 /*#__PURE__*/
 function (_React$Component) {
   _inherits(TopDiagram, _React$Component);
 
   function TopDiagram(props) {
+    var _this;
+
     _classCallCheck(this, TopDiagram);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(TopDiagram).call(this, props));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(TopDiagram).call(this, props));
+    _this.appDir = [0, 0];
+    _this.appHeading = 0;
+    return _this;
   }
 
   _createClass(TopDiagram, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.ctx = this.refs.canvas.getContext('2d');
+      this.drawDiagram();
+    }
+  }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate() {
+      this.drawDiagram();
+    }
+  }, {
+    key: "clearDisplay",
+    value: function clearDisplay() {
+      this.ctx.fillStyle = 'blue';
+      this.ctx.fillRect(0, 0, 300, 300);
+    }
+  }, {
+    key: "drawDiagram",
+    value: function drawDiagram() {
+      this.clearDisplay();
+      this.drawBoat();
+    }
+  }, {
+    key: "drawBoat",
+    value: function drawBoat() {
+      var boat = this.props.boat;
+      var ctx = this.ctx;
+      ctx.beginPath();
+      ctx.fillStyle = 'brown';
+      ctx.beginPath();
+      ctx.arc(230, 170, 120, 2.8, 3.99, false);
+      ctx.arc(70, 170, 120, -0.85, 3.14 - 2.8, false);
+      ctx.closePath();
+      ctx.fill(); //mast
+
+      ctx.beginPath();
+      ctx.fillStyle = 'black';
+      ctx.beginPath();
+      ctx.arc(150, 115, 3, 0, 2 * Math.PI, true);
+      ctx.fill(); //apparentWindArrow
+
+      var appDir = boat.appWindDir;
+      var appSpeed = boat.appWindSpeed;
+      var appHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["getHeading"])(appDir);
+      var relAppHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toDegrees"])(appHeading) - boat.heading);
+      this.appHeading = appHeading;
+      this.appDir = appDir;
+      ctx.beginPath();
+      ctx.lineWidth = 6;
+      ctx.strokeStyle = 'lightblue'; //ctx.arc(150, 150, 100, 0, 2 * Math.PI, true);
+
+      ctx.moveTo(150 - 100 * Math.sin(relAppHeading), 150 + 100 * Math.cos(relAppHeading));
+      ctx.moveTo(150 - 100 * Math.sin(relAppHeading), 150 + 100 * Math.cos(relAppHeading));
+      ctx.lineTo(150 - (100 + appSpeed) * Math.sin(relAppHeading), 150 + (100 + appSpeed) * Math.cos(relAppHeading));
+      ctx.stroke();
+      ctx.lineWidth = 1;
+      ctx.fillStyle = 'lightblue'; //arrowheads
+
+      ctx.moveTo(150 - 98 * Math.sin(relAppHeading), 150 + 98 * Math.cos(relAppHeading));
+      ctx.lineTo(150 - 108 * Math.sin(relAppHeading + 0.15), 150 + 108 * Math.cos(relAppHeading + 0.15)); // ctx.moveTo(
+      //     150 - (100 * Math.sin(relAppHeading)),
+      //     150 + (100 * Math.cos(relAppHeading))
+      // );
+
+      ctx.lineTo(150 - 108 * Math.sin(relAppHeading - 0.15), 150 + 108 * Math.cos(relAppHeading - 0.15));
+      ctx.closePath();
+      ctx.stroke();
+      ctx.fill(); //sheetAngleIndicator
+
+      var sheetAngle = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(boat.mainSheetPos);
+      var indicatorLength = 60;
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = 'white';
+      ctx.beginPath();
+      ctx.moveTo(150, 111);
+      ctx.lineTo(150 + indicatorLength * Math.sin(sheetAngle), 111 + indicatorLength * Math.cos(sheetAngle));
+      ctx.moveTo(150, 111);
+      ctx.lineTo(150 - indicatorLength * Math.sin(sheetAngle), 111 + indicatorLength * Math.cos(sheetAngle));
+      ctx.stroke(); //boom
+
+      var boomAngle = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(boat.sailAngle);
+      var boomLength = 80;
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = 'black';
+      ctx.beginPath();
+      ctx.moveTo(150, 115);
+      ctx.lineTo(150 + boomLength * Math.sin(boomAngle), 115 + boomLength * Math.cos(boomAngle));
+      ctx.stroke(); //center point
+
+      ctx.beginPath();
+      ctx.fillStyle = 'blue';
+      ctx.beginPath();
+      ctx.arc(150, 150, 2, 0, 2 * Math.PI, true);
+      ctx.fill(); //rudder
+
+      var angle = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(boat.rudderAngle);
+      var rudderLength = 20;
+      ctx.beginPath();
+      ctx.arc(150, 210, 2, 0, 2 * Math.PI, true);
+      ctx.moveTo(150, 210);
+      ctx.lineWidth = 3;
+      ctx.lineTo(150 - rudderLength * Math.sin(angle), 210 + rudderLength * Math.cos(angle));
+      ctx.stroke(); //tiller
+
+      var tillerLength = 30;
+      ctx.beginPath();
+      ctx.moveTo(150, 210);
+      ctx.lineWidth = 1;
+      ctx.lineTo(150 + tillerLength * Math.sin(angle), 210 - tillerLength * Math.cos(angle));
+      ctx.stroke();
+    }
+  }, {
     key: "render",
     value: function render() {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "top_diagram"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "boat"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "view_port"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "boat_port"
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "view_starboard"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "boat_starboard"
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "view_astern"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        style: {
-          'transform': "rotate(".concat(this.props.boat.rudderAngle, "deg)")
-        },
-        className: "rudder"
-      }))));
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, "x: ", this.appDir[0], react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "y: ", this.appDir[1], react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "appHeading: ", Math.round(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toDegrees"])(this.appHeading)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "app wind speed: ", Math.round(this.props.boat.appWindSpeed), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "diff: ", Math.round(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toDegrees"])(this.appHeading) - this.props.boat.heading), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("canvas", {
+        ref: "canvas",
+        width: "300px",
+        height: "300px"
+      }));
     }
   }]);
 
@@ -380,11 +484,11 @@ function () {
     this.speed = 0;
     this.maxSpeed = 40; //      pixels/second
 
-    this.mainSheetPos = 0; //      max |angle| of sail
+    this.mainSheetPos = 20; //      max |angle| of sail
 
     this.trimmingSpeed = 30; //      deg/second
 
-    this.maxSheetAngle = 180;
+    this.maxSheetAngle = 100;
     this.sailCd = 5;
     this.sailCl = 9;
     this.appWindDir = [0, 0];
@@ -440,7 +544,7 @@ function () {
   }, {
     key: "calculateSpeed",
     value: function calculateSpeed() {
-      return 10;
+      return 20;
       var maxSpeed = this.maxSpeed;
       var speedAngle = this.heading < 180 ? this.heading : this.heading - 2 * (this.heading - 180);
 
@@ -468,11 +572,14 @@ function () {
     key: "updateSailAngle",
     value: function updateSailAngle(dt) {
       var windHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getHeadingDeg"])(this.appWindDir);
-      this.sailAngle = Math.abs(180 - windHeading + this.heading); /////////DOES NOT WORK ON STARBOARD TACK!!!!! :(
+      this.sailAngle = Math.abs(180 - windHeading + this.heading);
+
+      if (this.sailAngle > 180) {
+        this.sailAngle = this.sailAngle - 360;
+      }
 
       if (Math.abs(this.sailAngle) > this.mainSheetPos) {
         this.sailAngle = this.heading < 180 ? this.mainSheetPos : this.mainSheetPos * -1;
-        console.log(this.sailAngle);
       }
     }
   }, {
@@ -626,7 +733,7 @@ function () {
   function WindMap(width, height) {
     _classCallCheck(this, WindMap);
 
-    this.windSpeed = 40;
+    this.windSpeed = 30;
     this.windHeading = 0;
     this.width = width;
     this.height = height;
@@ -839,7 +946,7 @@ function (_React$Component) {
         model: this.state.model,
         boat: this.state.model.boat,
         windMap: this.state.model.windMap
-      }), "heading: ", Math.round(this.state.model.boat.heading), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "speed: ", Math.round(this.state.model.boat.speed), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "windspeed: ", Math.round(this.state.model.windMap.windSpeed), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "dragOnSail: x: ", Math.round(this.state.model.dragOnSail[0]), "y: ", Math.round(this.state.model.dragOnSail[1]), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "angle of attack: ", Math.round(this.state.model.boat.angleOfAttack), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "sailAngle: ", Math.round(this.state.model.boat.sailAngle));
+      }), "heading: ", Math.round(this.state.model.boat.heading), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "speed: ", Math.round(this.state.model.boat.speed), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "windspeed: ", Math.round(this.state.model.windMap.windSpeed), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "dragOnSail: x: ", Math.round(this.state.model.dragOnSail[0]) + ' y: ' + Math.round(this.state.model.dragOnSail[1]), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "angle of attack: ", Math.round(this.state.model.boat.angleOfAttack), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "sailAngle: ", Math.round(this.state.model.boat.sailAngle));
     }
   }]);
 

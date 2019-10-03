@@ -62,8 +62,8 @@ class Simulation extends React.Component {
                 <br />
                 windspeed: {Math.round(this.state.model.windMap.windSpeed)}
                 <br />
-                dragOnSail: x: {Math.round(this.state.model.dragOnSail[0])}
-                y: {Math.round(this.state.model.dragOnSail[1])}
+                dragOnSail: x: {Math.round(this.state.model.dragOnSail[0]) + 
+                    ' y: ' + Math.round(this.state.model.dragOnSail[1])}
                 <br />
                 angle of attack: {Math.round(this.state.model.boat.angleOfAttack)}
                 <br />

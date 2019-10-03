@@ -20,7 +20,7 @@ class MainDisplay extends React.Component {
 
     clearDisplay() {
         this.ctx.fillStyle = 'darkblue';
-        this.ctx.fillRect(0, 0, 800, 600, 'lightblue');
+        this.ctx.fillRect(0, 0, 800, 600);
     }
 
     drawModel() {
