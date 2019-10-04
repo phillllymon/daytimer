@@ -21,11 +21,11 @@ class TopDiagram extends React.Component {
             appWind: true,
             sailLift: false,
             sailDrag: false,
-            sailForce: true,
+            sailForce: false,
             boardLift: false,
-            boardDrag: false,
+            boardDrag: true,
             boardForce: false,
-            totalForce: true
+            totalForce: false
         };
 
         this.toggleArrow = this.toggleArrow.bind(this);
@@ -232,6 +232,9 @@ class TopDiagram extends React.Component {
                         );
                     })
                 }
+                heading: {this.props.model.boat.heading}
+                <br/>
+                angle: {this.props.model.boat.centerBoard.angle}
                 <canvas ref="canvas"
                     width="300px"
                     height="300px"

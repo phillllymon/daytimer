@@ -182,7 +182,7 @@ class Boat {
     calculateLiftOnCenterBoard() {
         let absBoardAngle = this.heading - 180;
         let waterVector = [-this.velocity[0], -this.velocity[1]];
-        let boardDrag = this.centerBoard.calculateLift(absBoardAngle, waterVector);
+        let boardDrag = this.centerBoard.calculateLift(absBoardAngle, waterVector, (this.tack === 'port'));
         return boardDrag;
     }
 

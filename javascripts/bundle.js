@@ -489,11 +489,11 @@ function (_React$Component) {
       appWind: true,
       sailLift: false,
       sailDrag: false,
-      sailForce: true,
+      sailForce: false,
       boardLift: false,
-      boardDrag: false,
+      boardDrag: true,
       boardForce: false,
-      totalForce: true
+      totalForce: false
     };
     _this.toggleArrow = _this.toggleArrow.bind(_assertThisInitialized(_this));
     return _this;
@@ -684,7 +684,7 @@ function (_React$Component) {
           id: key,
           onClick: that.toggleArrow
         }, key), that.arrows[key] ? 'true' : 'false');
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("canvas", {
+      }), "heading: ", this.props.model.boat.heading, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "angle: ", this.props.model.boat.centerBoard.angle, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("canvas", {
         ref: "canvas",
         width: "300px",
         height: "300px"
@@ -908,7 +908,7 @@ function () {
     value: function calculateLiftOnCenterBoard() {
       var absBoardAngle = this.heading - 180;
       var waterVector = [-this.velocity[0], -this.velocity[1]];
-      var boardDrag = this.centerBoard.calculateLift(absBoardAngle, waterVector);
+      var boardDrag = this.centerBoard.calculateLift(absBoardAngle, waterVector, this.tack === 'port');
       return boardDrag;
     }
   }, {
@@ -956,18 +956,21 @@ function () {
     this.cLift = cLift;
     this.cDrag = cDrag;
     this.minDrag = minDrag;
+    this.angle = 0;
   } //both params absolute
 
 
   _createClass(Foil, [{
     key: "calculateDrag",
     value: function calculateDrag(foilAngle, fluidVelocity) {
+      this.angle = foilAngle;
       var fluidDir = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getUnitVector"])(fluidVelocity);
       var fluidHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getHeadingDeg"])(fluidDir);
-      var fluidSpeed = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["vectorMag"])(fluidVelocity);
+      var fluidSpeed = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["vectorMag"])(fluidVelocity); //let angleOfAttack = foilAngle - fluidHeading;
+
       var angleOfAttack = Math.abs(foilAngle - fluidHeading);
       var radAttack = -(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(angleOfAttack) - Math.PI);
-      var dragMag = this.minDrag + this.cDrag * (fluidSpeed * fluidSpeed) * Math.sin(radAttack);
+      var dragMag = Math.abs(this.minDrag + this.cDrag * (fluidSpeed * fluidSpeed) * Math.sin(radAttack));
       return [dragMag * fluidDir[0], dragMag * fluidDir[1]];
     }
   }, {
