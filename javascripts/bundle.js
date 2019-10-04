@@ -336,10 +336,10 @@ function (_React$Component) {
 
 /***/ }),
 
-/***/ "./javascripts/components/display/top_diagram.jsx":
-/*!********************************************************!*\
-  !*** ./javascripts/components/display/top_diagram.jsx ***!
-  \********************************************************/
+/***/ "./javascripts/components/display/stern_diagram.jsx":
+/*!**********************************************************!*\
+  !*** ./javascripts/components/display/stern_diagram.jsx ***!
+  \**********************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -371,6 +371,107 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+var SternDiagram =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(SternDiagram, _React$Component);
+
+  function SternDiagram(props) {
+    var _this;
+
+    _classCallCheck(this, SternDiagram);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(SternDiagram).call(this, props));
+    _this.appDir = [0, 0];
+    _this.appHeading = 0;
+    return _this;
+  }
+
+  _createClass(SternDiagram, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.ctx = this.refs.canvas.getContext('2d');
+      this.drawDiagram();
+    }
+  }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate() {
+      this.drawDiagram();
+    }
+  }, {
+    key: "clearDisplay",
+    value: function clearDisplay() {
+      this.ctx.fillStyle = 'lightblue';
+      this.ctx.fillRect(0, 0, 300, 210);
+      this.ctx.fillStyle = 'blue';
+      this.ctx.fillRect(0, 210, 300, 300);
+    }
+  }, {
+    key: "drawDiagram",
+    value: function drawDiagram() {
+      this.clearDisplay();
+      this.drawBoat();
+    }
+  }, {
+    key: "drawBoat",
+    value: function drawBoat() {
+      var model = this.props.model;
+      var boat = model.boat;
+      var ctx = this.ctx;
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("canvas", {
+        ref: "canvas",
+        width: "300px",
+        height: "300px"
+      }));
+    }
+  }]);
+
+  return SternDiagram;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
+
+/* harmony default export */ __webpack_exports__["default"] = (SternDiagram);
+
+/***/ }),
+
+/***/ "./javascripts/components/display/top_diagram.jsx":
+/*!********************************************************!*\
+  !*** ./javascripts/components/display/top_diagram.jsx ***!
+  \********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _util_vector_util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../util/vector_util */ "./javascripts/components/util/vector_util.js");
+/* harmony import */ var _canvas_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./canvas_helper */ "./javascripts/components/display/canvas_helper.js");
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+
+
 var TopDiagram =
 /*#__PURE__*/
 function (_React$Component) {
@@ -384,10 +485,27 @@ function (_React$Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(TopDiagram).call(this, props));
     _this.appDir = [0, 0];
     _this.appHeading = 0;
+    _this.arrows = {
+      appWind: true,
+      sailLift: false,
+      sailDrag: false,
+      sailForce: true,
+      boardLift: false,
+      boardDrag: false,
+      boardForce: false,
+      totalForce: true
+    };
+    _this.toggleArrow = _this.toggleArrow.bind(_assertThisInitialized(_this));
     return _this;
   }
 
   _createClass(TopDiagram, [{
+    key: "toggleArrow",
+    value: function toggleArrow(e) {
+      var val = this.arrows[e.target.id];
+      this.arrows[e.target.id] = val ? false : true;
+    }
+  }, {
     key: "componentDidMount",
     value: function componentDidMount() {
       this.ctx = this.refs.canvas.getContext('2d');
@@ -439,47 +557,79 @@ function (_React$Component) {
       var appSpeed = boat.appWindSpeed;
       var appHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["getHeading"])(appDir);
       var relAppHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toDegrees"])(appHeading) - boat.heading);
-      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, 150, 150, relAppHeading, 100, appSpeed, 6, 'lightblue'); //windDragArrow
-      // let dragAmt = vectorMag(model.dragOnSail);
-      // let relDragHeading = relAppHeading; //should be same as apparent wind
-      // makeOutArrow(ctx, 150, 150, relDragHeading, 50, dragAmt, 6, 'red');
-      //windLiftArrow
-      // let liftVec = model.liftOnSail;
-      // let liftAmt = vectorMag(liftVec);
-      // let liftHeading = getHeading(liftVec);
-      // let relLiftHeading = toRadians(toDegrees(liftHeading) - boat.heading);
-      // makeOutArrow(ctx, 150, 150, relLiftHeading, 50, liftAmt, 6, 'green');
-      //windForceArrow
+
+      if (this.arrows.appWind) {
+        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, 150, 150, relAppHeading, 100, appSpeed, 6, 'lightblue');
+      } //windDragArrow
+
+
+      var dragAmt = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["vectorMag"])(model.dragOnSail);
+      var relDragHeading = relAppHeading; //should be same as apparent wind
+
+      if (this.arrows.sailDrag) {
+        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeOutArrow"])(ctx, 150, 150, relDragHeading, 50, dragAmt, 6, 'red');
+      } //windLiftArrow
+
+
+      var liftVec = model.liftOnSail;
+      var liftAmt = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["vectorMag"])(liftVec);
+      var liftHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["getHeading"])(liftVec);
+      var relLiftHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toDegrees"])(liftHeading) - boat.heading);
+
+      if (this.arrows.sailLift) {
+        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeOutArrow"])(ctx, 150, 150, relLiftHeading, 50, liftAmt, 6, 'green');
+      } //windForceArrow
+
 
       var forceVec = model.forceOnSail;
       var forceAmt = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["vectorMag"])(forceVec);
       var forceHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["getHeading"])(forceVec);
       var relForceHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toDegrees"])(forceHeading) - boat.heading);
-      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeOutArrow"])(ctx, 150, 150, relForceHeading, 50, forceAmt, 6, 'green'); //boardDragArrow
-      // let boardDragVec = model.dragOnBoard;
-      // let boardDragAmt = vectorMag(boardDragVec);
-      // let boardDragHeading = getHeading(boardDragVec);
-      // let relBoardDragHeading = toRadians(toDegrees(boardDragHeading) - boat.heading);
-      // makeOutArrow(ctx, 150, 150, relBoardDragHeading, 70, boardDragAmt, 6, 'red');
-      //boardLiftArrow
-      // let boardLiftVec = model.liftOnBoard;
-      // let boardLiftAmt = vectorMag(boardLiftVec);
-      // let boardLiftHeading = getHeading(boardLiftVec);
-      // let relBoardLiftHeading = toRadians(toDegrees(boardLiftHeading) - boat.heading);
-      // makeOutArrow(ctx, 150, 150, relBoardLiftHeading, 50, boardLiftAmt, 6, 'green');
-      //boardForceArrow
+
+      if (this.arrows.sailForce) {
+        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeOutArrow"])(ctx, 150, 150, relForceHeading, 50, forceAmt, 6, 'green');
+      } //boardDragArrow
+
+
+      var boardDragVec = model.dragOnBoard;
+      var boardDragAmt = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["vectorMag"])(boardDragVec);
+      var boardDragHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["getHeading"])(boardDragVec);
+      var relBoardDragHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toDegrees"])(boardDragHeading) - boat.heading);
+
+      if (this.arrows.boardDrag) {
+        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeOutArrow"])(ctx, 150, 150, relBoardDragHeading, 70, boardDragAmt, 6, 'red');
+      } //boardLiftArrow
+
+
+      var boardLiftVec = model.liftOnBoard;
+      var boardLiftAmt = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["vectorMag"])(boardLiftVec);
+      var boardLiftHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["getHeading"])(boardLiftVec);
+      var relBoardLiftHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toDegrees"])(boardLiftHeading) - boat.heading);
+
+      if (this.arrows.boardLift) {
+        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeOutArrow"])(ctx, 150, 150, relBoardLiftHeading, 50, boardLiftAmt, 6, 'green');
+      } //boardForceArrow
+
 
       var boardForceVec = model.forceOnBoard;
       var boardForceAmt = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["vectorMag"])(boardForceVec);
       var boardForceHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["getHeading"])(boardForceVec);
       var relBoardForceHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toDegrees"])(boardForceHeading) - boat.heading);
-      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeOutArrow"])(ctx, 150, 150, relBoardForceHeading, 50, boardForceAmt, 6, 'red'); //totalForceArrow
+
+      if (this.arrows.boardForce) {
+        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeOutArrow"])(ctx, 150, 150, relBoardForceHeading, 50, boardForceAmt, 6, 'red');
+      } //totalForceArrow
+
 
       var totalForceVec = model.totalForce;
       var totalForceAmt = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["vectorMag"])(totalForceVec);
       var totalForceHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["getHeading"])(totalForceVec);
       var reltotalForceHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toDegrees"])(totalForceHeading) - boat.heading);
-      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeOutArrow"])(ctx, 150, 150, reltotalForceHeading, 50, totalForceAmt, 6, 'black'); //sheetAngleIndicator
+
+      if (this.arrows.totalForce) {
+        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeOutArrow"])(ctx, 150, 150, reltotalForceHeading, 50, totalForceAmt, 6, 'black');
+      } //sheetAngleIndicator
+
 
       var sheetAngle = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(boat.mainSheetPos);
       var indicatorLength = 60;
@@ -526,7 +676,15 @@ function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, "x: ", this.props.model.liftOnSail[0], react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "y: ", this.props.model.liftOnSail[1], react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "appHeading: ", Math.round(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toDegrees"])(this.appHeading)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "app wind speed: ", Math.round(this.props.model.boat.appWindSpeed), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "tack: ", this.props.model.boat.tack, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("canvas", {
+      var that = this;
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, Object.keys(this.arrows).map(function (key, idx) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          key: idx
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+          id: key,
+          onClick: that.toggleArrow
+        }, key), that.arrows[key] ? 'true' : 'false');
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("canvas", {
         ref: "canvas",
         width: "300px",
         height: "300px"
@@ -1077,10 +1235,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _display_top_diagram__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./display/top_diagram */ "./javascripts/components/display/top_diagram.jsx");
 /* harmony import */ var _display_main_display__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./display/main_display */ "./javascripts/components/display/main_display.jsx");
-/* harmony import */ var _util_input_manager__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./util/input_manager */ "./javascripts/components/util/input_manager.js");
-/* harmony import */ var _physics_model__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./physics/model */ "./javascripts/components/physics/model.js");
-/* harmony import */ var _physics_boat__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./physics/boat */ "./javascripts/components/physics/boat.js");
-/* harmony import */ var _physics_wind_map__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./physics/wind_map */ "./javascripts/components/physics/wind_map.js");
+/* harmony import */ var _display_stern_diagram__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./display/stern_diagram */ "./javascripts/components/display/stern_diagram.jsx");
+/* harmony import */ var _util_input_manager__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./util/input_manager */ "./javascripts/components/util/input_manager.js");
+/* harmony import */ var _physics_model__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./physics/model */ "./javascripts/components/physics/model.js");
+/* harmony import */ var _physics_boat__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./physics/boat */ "./javascripts/components/physics/boat.js");
+/* harmony import */ var _physics_wind_map__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./physics/wind_map */ "./javascripts/components/physics/wind_map.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1107,6 +1266,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
 var Simulation =
 /*#__PURE__*/
 function (_React$Component) {
@@ -1118,9 +1278,9 @@ function (_React$Component) {
     _classCallCheck(this, Simulation);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Simulation).call(this, props));
-    _this.inputManager = new _util_input_manager__WEBPACK_IMPORTED_MODULE_3__["default"]();
-    _this.windMap = new _physics_wind_map__WEBPACK_IMPORTED_MODULE_6__["default"](1200, 800);
-    _this.model = new _physics_model__WEBPACK_IMPORTED_MODULE_4__["default"](new _physics_boat__WEBPACK_IMPORTED_MODULE_5__["default"](), _this.windMap);
+    _this.inputManager = new _util_input_manager__WEBPACK_IMPORTED_MODULE_4__["default"]();
+    _this.windMap = new _physics_wind_map__WEBPACK_IMPORTED_MODULE_7__["default"](1200, 800);
+    _this.model = new _physics_model__WEBPACK_IMPORTED_MODULE_5__["default"](new _physics_boat__WEBPACK_IMPORTED_MODULE_6__["default"](), _this.windMap);
     _this.state = {
       model: _this.model
     };
@@ -1164,9 +1324,11 @@ function (_React$Component) {
         style: {
           'display': 'flex'
         }
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_display_top_diagram__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_display_top_diagram__WEBPACK_IMPORTED_MODULE_1__["default"], {
         model: this.state.model
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_display_main_display__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_display_stern_diagram__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        model: this.state.model
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_display_main_display__WEBPACK_IMPORTED_MODULE_2__["default"], {
         model: this.state.model,
         boat: this.state.model.boat,
         windMap: this.state.model.windMap

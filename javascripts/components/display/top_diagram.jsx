@@ -16,6 +16,24 @@ class TopDiagram extends React.Component {
         super(props);
         this.appDir = [0, 0];
         this.appHeading = 0;
+
+        this.arrows = {
+            appWind: true,
+            sailLift: false,
+            sailDrag: false,
+            sailForce: true,
+            boardLift: false,
+            boardDrag: false,
+            boardForce: false,
+            totalForce: true
+        };
+
+        this.toggleArrow = this.toggleArrow.bind(this);
+    }
+
+    toggleArrow(e) {
+        let val = this.arrows[e.target.id];
+        this.arrows[e.target.id] = val ? false : true;
     }
 
     componentDidMount() {
@@ -68,54 +86,71 @@ class TopDiagram extends React.Component {
         let appSpeed = boat.appWindSpeed;
         let appHeading = getHeading(appDir);
         let relAppHeading = toRadians(toDegrees(appHeading) - boat.heading);
-        makeInArrow(ctx, 150, 150, relAppHeading, 100, appSpeed, 6, 'lightblue');
+        if (this.arrows.appWind) {
+            makeInArrow(ctx, 150, 150, relAppHeading, 100, appSpeed, 6, 'lightblue');
+        }
+        
 
         //windDragArrow
-        // let dragAmt = vectorMag(model.dragOnSail);
-        // let relDragHeading = relAppHeading; //should be same as apparent wind
-        // makeOutArrow(ctx, 150, 150, relDragHeading, 50, dragAmt, 6, 'red');
+        let dragAmt = vectorMag(model.dragOnSail);
+        let relDragHeading = relAppHeading; //should be same as apparent wind
+        if (this.arrows.sailDrag) {
+            makeOutArrow(ctx, 150, 150, relDragHeading, 50, dragAmt, 6, 'red');
+        }
 
         //windLiftArrow
-        // let liftVec = model.liftOnSail;
-        // let liftAmt = vectorMag(liftVec);
-        // let liftHeading = getHeading(liftVec);
-        // let relLiftHeading = toRadians(toDegrees(liftHeading) - boat.heading);
-        // makeOutArrow(ctx, 150, 150, relLiftHeading, 50, liftAmt, 6, 'green');
+        let liftVec = model.liftOnSail;
+        let liftAmt = vectorMag(liftVec);
+        let liftHeading = getHeading(liftVec);
+        let relLiftHeading = toRadians(toDegrees(liftHeading) - boat.heading);
+        if (this.arrows.sailLift) {
+            makeOutArrow(ctx, 150, 150, relLiftHeading, 50, liftAmt, 6, 'green');
+        }
 
         //windForceArrow
         let forceVec = model.forceOnSail;
         let forceAmt = vectorMag(forceVec);
         let forceHeading = getHeading(forceVec);
         let relForceHeading = toRadians(toDegrees(forceHeading) - boat.heading);
-        makeOutArrow(ctx, 150, 150, relForceHeading, 50, forceAmt, 6, 'green');
+        if (this.arrows.sailForce) {
+            makeOutArrow(ctx, 150, 150, relForceHeading, 50, forceAmt, 6, 'green');
+        }
 
         //boardDragArrow
-        // let boardDragVec = model.dragOnBoard;
-        // let boardDragAmt = vectorMag(boardDragVec);
-        // let boardDragHeading = getHeading(boardDragVec);
-        // let relBoardDragHeading = toRadians(toDegrees(boardDragHeading) - boat.heading);
-        // makeOutArrow(ctx, 150, 150, relBoardDragHeading, 70, boardDragAmt, 6, 'red');
+        let boardDragVec = model.dragOnBoard;
+        let boardDragAmt = vectorMag(boardDragVec);
+        let boardDragHeading = getHeading(boardDragVec);
+        let relBoardDragHeading = toRadians(toDegrees(boardDragHeading) - boat.heading);
+        if (this.arrows.boardDrag) {
+            makeOutArrow(ctx, 150, 150, relBoardDragHeading, 70, boardDragAmt, 6, 'red');
+        }
 
         //boardLiftArrow
-        // let boardLiftVec = model.liftOnBoard;
-        // let boardLiftAmt = vectorMag(boardLiftVec);
-        // let boardLiftHeading = getHeading(boardLiftVec);
-        // let relBoardLiftHeading = toRadians(toDegrees(boardLiftHeading) - boat.heading);
-        // makeOutArrow(ctx, 150, 150, relBoardLiftHeading, 50, boardLiftAmt, 6, 'green');
+        let boardLiftVec = model.liftOnBoard;
+        let boardLiftAmt = vectorMag(boardLiftVec);
+        let boardLiftHeading = getHeading(boardLiftVec);
+        let relBoardLiftHeading = toRadians(toDegrees(boardLiftHeading) - boat.heading);
+        if (this.arrows.boardLift) {
+            makeOutArrow(ctx, 150, 150, relBoardLiftHeading, 50, boardLiftAmt, 6, 'green');
+        }
 
         //boardForceArrow
         let boardForceVec = model.forceOnBoard;
         let boardForceAmt = vectorMag(boardForceVec);
         let boardForceHeading = getHeading(boardForceVec);
         let relBoardForceHeading = toRadians(toDegrees(boardForceHeading) - boat.heading);
-        makeOutArrow(ctx, 150, 150, relBoardForceHeading, 50, boardForceAmt, 6, 'red');
+        if (this.arrows.boardForce) {
+            makeOutArrow(ctx, 150, 150, relBoardForceHeading, 50, boardForceAmt, 6, 'red');
+        }
 
         //totalForceArrow
         let totalForceVec = model.totalForce;
         let totalForceAmt = vectorMag(totalForceVec);
         let totalForceHeading = getHeading(totalForceVec);
         let reltotalForceHeading = toRadians(toDegrees(totalForceHeading) - boat.heading);
-        makeOutArrow(ctx, 150, 150, reltotalForceHeading, 50, totalForceAmt, 6, 'black');
+        if (this.arrows.totalForce) {
+            makeOutArrow(ctx, 150, 150, reltotalForceHeading, 50, totalForceAmt, 6, 'black');
+        }
 
         //sheetAngleIndicator
         let sheetAngle = toRadians(boat.mainSheetPos);
@@ -182,17 +217,21 @@ class TopDiagram extends React.Component {
     }
 
     render (){
+        let that = this;
         return (
             <div>
-                x: {this.props.model.liftOnSail[0]}
-                <br/>
-                y: {this.props.model.liftOnSail[1]}
-                <br />
-                appHeading: {Math.round(toDegrees(this.appHeading))}
-                <br />
-                app wind speed: {Math.round(this.props.model.boat.appWindSpeed)}
-                <br/>
-                tack: {this.props.model.boat.tack}
+                {
+                    Object.keys(this.arrows).map( (key, idx) => {
+                        return (
+                            <div key={idx}>   
+                                <button id={key} onClick={that.toggleArrow}>
+                                    {key} 
+                                </button>
+                                    {that.arrows[key] ? 'true' : 'false'}
+                            </div>
+                        );
+                    })
+                }
                 <canvas ref="canvas"
                     width="300px"
                     height="300px"

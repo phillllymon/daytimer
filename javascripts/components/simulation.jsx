@@ -1,6 +1,7 @@
 import React from 'react';
 import TopDiagram from './display/top_diagram';
 import MainDisplay from './display/main_display';
+import SternDiagram from './display/stern_diagram';
 import InputManager from './util/input_manager';
 import Model from './physics/model';
 import Boat from './physics/boat';
@@ -48,9 +49,14 @@ class Simulation extends React.Component {
     render () {
         return (
             <div style={{'display' : 'flex'}}>
-                <TopDiagram   
-                    model={this.state.model}
-                />
+                <div>
+                    <TopDiagram   
+                        model={this.state.model}
+                    />
+                    <SternDiagram
+                        model={this.state.model}
+                    />
+                </div>
                 <MainDisplay
                     model={this.state.model}
                     boat={this.state.model.boat}
