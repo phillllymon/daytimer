@@ -6,12 +6,20 @@ export const vectorMag = (vector) => {
 
 export const getUnitVector = (vector) => {
     let mag = vectorMag(vector);
-    return [vector[0] / mag, vector[1] / mag];
+    if (mag > 0) {
+        return [vector[0] / mag, vector[1] / mag];
+    }
+    else {
+        return [0, 0];
+    }
 };
 
 export const getHeading = (vector) => {
     let x = vector[0];
     let y = vector[1];
+    if (x === 0 || y === 0) {
+        return 0;
+    }
     let posX = Math.abs(x);
     let posY = Math.abs(y);
     let angle = Math.atan(posY / posX);
@@ -33,4 +41,8 @@ export const toDegrees = (radAngle) => {
 
 export const toRadians = (degAngle) => {
     return degAngle * Math.PI / 180;
+};
+
+export const vectorSum = (vectorA, vectorB) => {
+    return [vectorA[0] + vectorB[0], vectorA[1], vectorB[1]];
 };

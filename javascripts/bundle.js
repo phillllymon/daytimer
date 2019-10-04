@@ -86,6 +86,68 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./javascripts/components/display/canvas_helper.js":
+/*!*********************************************************!*\
+  !*** ./javascripts/components/display/canvas_helper.js ***!
+  \*********************************************************/
+/*! exports provided: makeInArrow, makeOutArrow, makeStreamRipple */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "makeInArrow", function() { return makeInArrow; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "makeOutArrow", function() { return makeOutArrow; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "makeStreamRipple", function() { return makeStreamRipple; });
+/* harmony import */ var _util_vector_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/vector_util */ "./javascripts/components/util/vector_util.js");
+
+var makeInArrow = function makeInArrow(ctx, x, y, angle, offset, length, width, color) {
+  ctx.beginPath();
+  ctx.lineWidth = width;
+  ctx.strokeStyle = color;
+  ctx.moveTo(x - offset * Math.sin(angle), y + offset * Math.cos(angle));
+  ctx.lineTo(x - (offset + length) * Math.sin(angle), y + (offset + length) * Math.cos(angle));
+  ctx.stroke();
+  ctx.lineWidth = 1;
+  ctx.fillStyle = color;
+  ctx.moveTo(x - (offset - 2) * Math.sin(angle), y + (offset - 2) * Math.cos(angle));
+  ctx.lineTo(x - (offset + 8) * Math.sin(angle + 0.15), y + (offset + 8) * Math.cos(angle + 0.15));
+  ctx.lineTo(x - (offset + 8) * Math.sin(angle - 0.15), y + (offset + 8) * Math.cos(angle - 0.15));
+  ctx.closePath();
+  ctx.stroke();
+  ctx.fill();
+};
+var makeOutArrow = function makeOutArrow(ctx, x, y, angle, offset, length, width, color) {
+  ctx.beginPath();
+  ctx.lineWidth = width;
+  ctx.strokeStyle = color;
+  ctx.moveTo(x + offset * Math.sin(angle), y - offset * Math.cos(angle));
+  ctx.lineTo(x + (offset + length) * Math.sin(angle), y - (offset + length) * Math.cos(angle));
+  ctx.stroke();
+  ctx.lineWidth = 1;
+  ctx.fillStyle = color;
+  ctx.moveTo(x + (offset + length + 2) * Math.sin(angle), y - (offset + length + 2) * Math.cos(angle));
+  ctx.lineTo(x + (offset + length - 8) * Math.sin(angle + 0.15), y - (offset + length - 8) * Math.cos(angle + 0.15));
+  ctx.lineTo(x + (offset + length - 8) * Math.sin(angle - 0.15), y - (offset + length - 8) * Math.cos(angle - 0.15));
+  ctx.closePath();
+  ctx.stroke();
+  ctx.fill();
+};
+var makeStreamRipple = function makeStreamRipple(ctx, x, y, velocity, heading) {
+  var boatVel = velocity;
+  var boatSpeed = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["vectorMag"])(boatVel);
+  var boatVelHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getHeading"])(boatVel);
+  var relBoatVelHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toDegrees"])(boatVelHeading) - heading);
+  var streamVector = [boatSpeed * Math.sin(relBoatVelHeading), boatSpeed * Math.cos(relBoatVelHeading)];
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = 'lightblue';
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x - streamVector[0], y + streamVector[1]);
+  ctx.stroke();
+};
+
+/***/ }),
+
 /***/ "./javascripts/components/display/main_display.jsx":
 /*!*********************************************************!*\
   !*** ./javascripts/components/display/main_display.jsx ***!
@@ -145,7 +207,7 @@ function (_React$Component) {
     key: "clearDisplay",
     value: function clearDisplay() {
       this.ctx.fillStyle = 'darkblue';
-      this.ctx.fillRect(0, 0, 800, 600);
+      this.ctx.fillRect(0, 0, 1200, 800);
     }
   }, {
     key: "drawModel",
@@ -236,7 +298,7 @@ function (_React$Component) {
 
       var dragVec = model.dragOnSail;
       var dragDir = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["getUnitVector"])(dragVec);
-      var dragMag = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["vectorMag"])(dragVec) / 500;
+      var dragMag = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["vectorMag"])(dragVec) * 3;
       ctx.beginPath();
       ctx.strokeStyle = 'orange';
       ctx.moveTo(80 * dragDir[0], 80 * dragDir[1]);
@@ -250,15 +312,19 @@ function (_React$Component) {
       ctx.arc(40, 40, 2, 0, 2 * Math.PI, true);
       ctx.moveTo(40, 40);
       ctx.lineTo(40 + trueVec[0], 40 + trueVec[1]);
-      ctx.stroke();
+      ctx.stroke(); //vertical line
+      // ctx.beginPath();
+      // ctx.moveTo(400, 0);
+      // ctx.lineTo(400, 600);
+      // ctx.stroke();
     }
   }, {
     key: "render",
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("canvas", {
         ref: "canvas",
-        width: "800px",
-        height: "600px"
+        width: "1200px",
+        height: "800px"
       }));
     }
   }]);
@@ -282,6 +348,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _util_vector_util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../util/vector_util */ "./javascripts/components/util/vector_util.js");
+/* harmony import */ var _canvas_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./canvas_helper */ "./javascripts/components/display/canvas_helper.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -299,6 +366,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -345,8 +413,14 @@ function (_React$Component) {
   }, {
     key: "drawBoat",
     value: function drawBoat() {
-      var boat = this.props.boat;
-      var ctx = this.ctx;
+      var model = this.props.model;
+      var boat = model.boat;
+      var ctx = this.ctx; //streamRipples
+
+      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeStreamRipple"])(ctx, 150, 80, boat.velocity, boat.heading);
+      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeStreamRipple"])(ctx, 183, 210, boat.velocity, boat.heading);
+      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeStreamRipple"])(ctx, 117, 210, boat.velocity, boat.heading); //boat
+
       ctx.beginPath();
       ctx.fillStyle = 'brown';
       ctx.beginPath();
@@ -365,29 +439,47 @@ function (_React$Component) {
       var appSpeed = boat.appWindSpeed;
       var appHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["getHeading"])(appDir);
       var relAppHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toDegrees"])(appHeading) - boat.heading);
-      this.appHeading = appHeading;
-      this.appDir = appDir;
-      ctx.beginPath();
-      ctx.lineWidth = 6;
-      ctx.strokeStyle = 'lightblue'; //ctx.arc(150, 150, 100, 0, 2 * Math.PI, true);
+      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, 150, 150, relAppHeading, 100, appSpeed, 6, 'lightblue'); //windDragArrow
+      // let dragAmt = vectorMag(model.dragOnSail);
+      // let relDragHeading = relAppHeading; //should be same as apparent wind
+      // makeOutArrow(ctx, 150, 150, relDragHeading, 50, dragAmt, 6, 'red');
+      //windLiftArrow
+      // let liftVec = model.liftOnSail;
+      // let liftAmt = vectorMag(liftVec);
+      // let liftHeading = getHeading(liftVec);
+      // let relLiftHeading = toRadians(toDegrees(liftHeading) - boat.heading);
+      // makeOutArrow(ctx, 150, 150, relLiftHeading, 50, liftAmt, 6, 'green');
+      //windForceArrow
 
-      ctx.moveTo(150 - 100 * Math.sin(relAppHeading), 150 + 100 * Math.cos(relAppHeading));
-      ctx.moveTo(150 - 100 * Math.sin(relAppHeading), 150 + 100 * Math.cos(relAppHeading));
-      ctx.lineTo(150 - (100 + appSpeed) * Math.sin(relAppHeading), 150 + (100 + appSpeed) * Math.cos(relAppHeading));
-      ctx.stroke();
-      ctx.lineWidth = 1;
-      ctx.fillStyle = 'lightblue'; //arrowheads
+      var forceVec = model.forceOnSail;
+      var forceAmt = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["vectorMag"])(forceVec);
+      var forceHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["getHeading"])(forceVec);
+      var relForceHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toDegrees"])(forceHeading) - boat.heading);
+      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeOutArrow"])(ctx, 150, 150, relForceHeading, 50, forceAmt, 6, 'green'); //boardDragArrow
+      // let boardDragVec = model.dragOnBoard;
+      // let boardDragAmt = vectorMag(boardDragVec);
+      // let boardDragHeading = getHeading(boardDragVec);
+      // let relBoardDragHeading = toRadians(toDegrees(boardDragHeading) - boat.heading);
+      // makeOutArrow(ctx, 150, 150, relBoardDragHeading, 70, boardDragAmt, 6, 'red');
+      //boardLiftArrow
+      // let boardLiftVec = model.liftOnBoard;
+      // let boardLiftAmt = vectorMag(boardLiftVec);
+      // let boardLiftHeading = getHeading(boardLiftVec);
+      // let relBoardLiftHeading = toRadians(toDegrees(boardLiftHeading) - boat.heading);
+      // makeOutArrow(ctx, 150, 150, relBoardLiftHeading, 50, boardLiftAmt, 6, 'green');
+      //boardForceArrow
 
-      ctx.moveTo(150 - 98 * Math.sin(relAppHeading), 150 + 98 * Math.cos(relAppHeading));
-      ctx.lineTo(150 - 108 * Math.sin(relAppHeading + 0.15), 150 + 108 * Math.cos(relAppHeading + 0.15)); // ctx.moveTo(
-      //     150 - (100 * Math.sin(relAppHeading)),
-      //     150 + (100 * Math.cos(relAppHeading))
-      // );
+      var boardForceVec = model.forceOnBoard;
+      var boardForceAmt = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["vectorMag"])(boardForceVec);
+      var boardForceHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["getHeading"])(boardForceVec);
+      var relBoardForceHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toDegrees"])(boardForceHeading) - boat.heading);
+      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeOutArrow"])(ctx, 150, 150, relBoardForceHeading, 50, boardForceAmt, 6, 'red'); //totalForceArrow
 
-      ctx.lineTo(150 - 108 * Math.sin(relAppHeading - 0.15), 150 + 108 * Math.cos(relAppHeading - 0.15));
-      ctx.closePath();
-      ctx.stroke();
-      ctx.fill(); //sheetAngleIndicator
+      var totalForceVec = model.totalForce;
+      var totalForceAmt = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["vectorMag"])(totalForceVec);
+      var totalForceHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["getHeading"])(totalForceVec);
+      var reltotalForceHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toDegrees"])(totalForceHeading) - boat.heading);
+      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeOutArrow"])(ctx, 150, 150, reltotalForceHeading, 50, totalForceAmt, 6, 'black'); //sheetAngleIndicator
 
       var sheetAngle = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(boat.mainSheetPos);
       var indicatorLength = 60;
@@ -434,7 +526,7 @@ function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, "x: ", this.appDir[0], react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "y: ", this.appDir[1], react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "appHeading: ", Math.round(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toDegrees"])(this.appHeading)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "app wind speed: ", Math.round(this.props.boat.appWindSpeed), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "diff: ", Math.round(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toDegrees"])(this.appHeading) - this.props.boat.heading), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("canvas", {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, "x: ", this.props.model.liftOnSail[0], react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "y: ", this.props.model.liftOnSail[1], react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "appHeading: ", Math.round(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toDegrees"])(this.appHeading)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "app wind speed: ", Math.round(this.props.model.boat.appWindSpeed), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "tack: ", this.props.model.boat.tack, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("canvas", {
         ref: "canvas",
         width: "300px",
         height: "300px"
@@ -459,11 +551,13 @@ function (_React$Component) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util_vector_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/vector_util */ "./javascripts/components/util/vector_util.js");
+/* harmony import */ var _foil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./foil */ "./javascripts/components/physics/foil.js");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
 
 
 
@@ -473,8 +567,10 @@ function () {
   function Boat() {
     _classCallCheck(this, Boat);
 
+    this.sail = new _foil__WEBPACK_IMPORTED_MODULE_1__["default"](0.06, 0.03, 10);
+    this.centerBoard = new _foil__WEBPACK_IMPORTED_MODULE_1__["default"](0.8, 0.3, 1);
     this.rudderAngle = 0;
-    this.position = [400, 300];
+    this.position = [400, 100];
     this.sailAngle = 0;
     this.rudderSpeed = 100; //      deg/second
 
@@ -482,18 +578,22 @@ function () {
 
     this.heading = 0;
     this.speed = 0;
+    this.velocity = [0, 0];
+    this.mass = 2;
     this.maxSpeed = 40; //      pixels/second
 
     this.mainSheetPos = 20; //      max |angle| of sail
 
     this.trimmingSpeed = 30; //      deg/second
 
-    this.maxSheetAngle = 100;
-    this.sailCd = 5;
-    this.sailCl = 9;
+    this.maxSheetAngle = 100; //this.sailCd = .03;
+
+    this.minSailDrag = 10; //this.sailCl = .08;
+
     this.appWindDir = [0, 0];
     this.appWindSpeed = 0;
     this.appWindVel = [0, 0];
+    this.tack = 'starboard';
   }
 
   _createClass(Boat, [{
@@ -530,21 +630,38 @@ function () {
       if (this.heading < 0) this.heading += 360;
     }
   }, {
+    key: "calculateTotalForceOnBoat",
+    value: function calculateTotalForceOnBoat() {
+      var sailForce = this.calculateForceOnSail();
+      var boardForce = this.calculateForceOnCenterBoard();
+      return [sailForce[0] + boardForce[0], sailForce[1] + boardForce[1]]; //return vectorSum(sailForce, boardForce);
+    }
+  }, {
+    key: "updateVelocity",
+    value: function updateVelocity(dt) {
+      var totalForce = this.calculateTotalForceOnBoat();
+      var acc = [totalForce[0] / this.mass, totalForce[1] / this.mass];
+      this.velocity[0] += dt * acc[0];
+      this.velocity[1] += dt * acc[1];
+    }
+  }, {
     key: "updatePosition",
     value: function updatePosition(dt) {
-      var speed = this.calculateSpeed();
-      var radHeading = this.heading * Math.PI / 180;
-      var unitVector = [Math.sin(radHeading), Math.cos(radHeading)];
-      var dist = speed * dt;
-      var moveVector = [dist * unitVector[0], dist * unitVector[1]];
+      var moveVector = [dt * this.velocity[0], dt * this.velocity[1]];
       this.position[0] += moveVector[0];
-      this.position[1] -= moveVector[1];
-      this.speed = speed;
+      this.position[1] += moveVector[1]; // let speed = this.calculateSpeed();
+      // let radHeading = this.heading * Math.PI / 180;
+      // let unitVector = [Math.sin(radHeading), Math.cos(radHeading)];
+      // let dist = speed * dt;
+      // let moveVector = [dist * unitVector[0], dist * unitVector[1]];
+      // this.position[0] += moveVector[0];
+      // this.position[1] -= moveVector[1];
+      // this.speed = speed;
     }
   }, {
     key: "calculateSpeed",
     value: function calculateSpeed() {
-      return 20;
+      return 10;
       var maxSpeed = this.maxSpeed;
       var speedAngle = this.heading < 180 ? this.heading : this.heading - 2 * (this.heading - 180);
 
@@ -581,49 +698,143 @@ function () {
       if (Math.abs(this.sailAngle) > this.mainSheetPos) {
         this.sailAngle = this.heading < 180 ? this.mainSheetPos : this.mainSheetPos * -1;
       }
+
+      this.tack = this.sailAngle < 0 ? 'starboard' : 'port';
     }
   }, {
     key: "calculateAppWind",
     value: function calculateAppWind(windHeading, windSpeed) {
-      var radHeading = this.heading * Math.PI / 180;
+      var moveDir = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getUnitVector"])(this.velocity);
+      var moveHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getHeadingDeg"])(moveDir);
+      var radHeading = this.heading * Math.PI / 180; //let radHeading = moveHeading * Math.PI / 180;
+
       var boatDir = [Math.sin(radHeading), -Math.cos(radHeading)];
       var boatVel = [boatDir[0] * this.speed, boatDir[1] * this.speed];
       var radTrueWind = (windHeading - 180) * Math.PI / 180;
       var trueDir = [Math.sin(radTrueWind), -Math.cos(radTrueWind)];
       var trueVel = [trueDir[0] * windSpeed, trueDir[1] * windSpeed];
-      this.appWindVel = [trueVel[0] - boatVel[0], trueVel[1] - boatVel[1]];
+      this.appWindVel = [trueVel[0] - this.velocity[0], trueVel[1] - this.velocity[1]];
       this.appWindDir = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getUnitVector"])(this.appWindVel);
       this.appWindSpeed = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["vectorMag"])(this.appWindVel);
       return this.appWindVel;
     }
   }, {
     key: "calculateForceOnSail",
-    value: function calculateForceOnSail(appWindVel) {}
+    value: function calculateForceOnSail() {
+      var lift = this.calculateLiftOnSail();
+      var drag = this.calculateDragOnSail();
+      return [lift[0] + drag[0], lift[1] + drag[1]];
+    }
   }, {
     key: "calculateDragOnSail",
     value: function calculateDragOnSail() {
       var absSailAngle = this.heading - this.sailAngle;
-      var radAbsSailAngle = absSailAngle * Math.PI / 180;
-      var absSailDir = [-Math.sin(radAbsSailAngle), Math.cos(radAbsSailAngle)];
-      var absAppDir = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getUnitVector"])(this.appWindVel);
-      var appWindHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getHeadingDeg"])(absAppDir);
-      var sailHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getHeadingDeg"])(absSailDir);
-      var angleOfAttack = Math.abs(appWindHeading - sailHeading);
-      var attackRad = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(angleOfAttack);
-      var sailDragMag = this.sailCd * (this.appWindSpeed * this.appWindSpeed) * Math.sin(attackRad);
-      var dragVector = [sailDragMag * absAppDir[0], sailDragMag * absAppDir[1]];
-      this.angleOfAttack = angleOfAttack;
-      return dragVector;
+      return this.sail.calculateDrag(absSailAngle, this.appWindVel);
     }
   }, {
     key: "calculateLiftOnSail",
-    value: function calculateLiftOnSail() {}
+    value: function calculateLiftOnSail() {
+      var absSailAngle = this.heading - this.sailAngle;
+      return this.sail.calculateLift(absSailAngle, this.appWindVel, this.tack === 'port');
+    }
+  }, {
+    key: "calculateDragOnCenterBoard",
+    value: function calculateDragOnCenterBoard() {
+      var absBoardAngle = this.heading - 180;
+      var waterVector = [-this.velocity[0], -this.velocity[1]];
+      var boardDrag = this.centerBoard.calculateDrag(absBoardAngle, waterVector);
+      return boardDrag;
+    }
+  }, {
+    key: "calculateLiftOnCenterBoard",
+    value: function calculateLiftOnCenterBoard() {
+      var absBoardAngle = this.heading - 180;
+      var waterVector = [-this.velocity[0], -this.velocity[1]];
+      var boardDrag = this.centerBoard.calculateLift(absBoardAngle, waterVector);
+      return boardDrag;
+    }
+  }, {
+    key: "calculateForceOnCenterBoard",
+    value: function calculateForceOnCenterBoard() {
+      var lift = this.calculateLiftOnCenterBoard();
+      var drag = this.calculateDragOnCenterBoard();
+      return [lift[0] + drag[0], lift[1] + drag[1]];
+    }
   }]);
 
   return Boat;
 }();
 
 /* harmony default export */ __webpack_exports__["default"] = (Boat);
+
+/***/ }),
+
+/***/ "./javascripts/components/physics/foil.js":
+/*!************************************************!*\
+  !*** ./javascripts/components/physics/foil.js ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _util_vector_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/vector_util */ "./javascripts/components/util/vector_util.js");
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
+var Foil =
+/*#__PURE__*/
+function () {
+  function Foil(cLift, cDrag) {
+    var minDrag = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 10;
+
+    _classCallCheck(this, Foil);
+
+    this.cLift = cLift;
+    this.cDrag = cDrag;
+    this.minDrag = minDrag;
+  } //both params absolute
+
+
+  _createClass(Foil, [{
+    key: "calculateDrag",
+    value: function calculateDrag(foilAngle, fluidVelocity) {
+      var fluidDir = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getUnitVector"])(fluidVelocity);
+      var fluidHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getHeadingDeg"])(fluidDir);
+      var fluidSpeed = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["vectorMag"])(fluidVelocity);
+      var angleOfAttack = Math.abs(foilAngle - fluidHeading);
+      var radAttack = -(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(angleOfAttack) - Math.PI);
+      var dragMag = this.minDrag + this.cDrag * (fluidSpeed * fluidSpeed) * Math.sin(radAttack);
+      return [dragMag * fluidDir[0], dragMag * fluidDir[1]];
+    }
+  }, {
+    key: "calculateLift",
+    value: function calculateLift(foilAngle, fluidVelocity, invert) {
+      var fluidDir = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getUnitVector"])(fluidVelocity);
+      var fluidHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getHeadingDeg"])(fluidDir);
+      var fluidSpeed = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["vectorMag"])(fluidVelocity);
+      var angleOfAttack = foilAngle - fluidHeading;
+      var radAttack = -(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(angleOfAttack) - Math.PI);
+      var liftMag = this.cLift * (fluidSpeed * fluidSpeed) * Math.sin(radAttack) * Math.cos(radAttack);
+      var liftDir = [-fluidDir[1], fluidDir[0]]; //does not seem to be needed
+      // if (invert) {
+      //     liftDir = [fluidDir[1], -fluidDir[0]];
+      //     console.log('here');
+      // }
+
+      return [liftMag * liftDir[0], liftMag * liftDir[1]];
+    }
+  }]);
+
+  return Foil;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (Foil);
 
 /***/ }),
 
@@ -651,6 +862,12 @@ function () {
     this.boat = boat;
     this.windMap = windMap;
     this.dragOnSail = [0, 0];
+    this.liftOnSail = [0, 0];
+    this.forceOnSail = [0, 0];
+    this.dragOnBoard = [0, 0];
+    this.liftOnBoard = [0, 0];
+    this.forceOnBoard = [0, 0];
+    this.totalForce = [0, 0];
   }
 
   _createClass(Model, [{
@@ -675,6 +892,13 @@ function () {
       this.windMap.updateWaves(dt);
       this.boat.calculateAppWind(this.windMap.windHeading, this.windMap.windSpeed);
       this.dragOnSail = this.boat.calculateDragOnSail();
+      this.liftOnSail = this.boat.calculateLiftOnSail();
+      this.forceOnSail = this.boat.calculateForceOnSail();
+      this.dragOnBoard = this.boat.calculateDragOnCenterBoard();
+      this.liftOnBoard = this.boat.calculateLiftOnCenterBoard();
+      this.forceOnBoard = this.boat.calculateForceOnCenterBoard();
+      this.totalForce = this.boat.calculateTotalForceOnBoat();
+      this.boat.updateVelocity(dt);
       this.boat.updatePosition(dt);
       this.boat.updateHeading(dt);
       this.boat.updateSailAngle(dt);
@@ -702,7 +926,7 @@ var windConfig = {
   numWaveStages: 18,
   timeWaveStage: 0.05,
   //seconds
-  numWaves: 400
+  numWaves: 800
 };
 
 /***/ }),
@@ -733,7 +957,7 @@ function () {
   function WindMap(width, height) {
     _classCallCheck(this, WindMap);
 
-    this.windSpeed = 30;
+    this.windSpeed = 60;
     this.windHeading = 0;
     this.width = width;
     this.height = height;
@@ -895,7 +1119,7 @@ function (_React$Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Simulation).call(this, props));
     _this.inputManager = new _util_input_manager__WEBPACK_IMPORTED_MODULE_3__["default"]();
-    _this.windMap = new _physics_wind_map__WEBPACK_IMPORTED_MODULE_6__["default"](800, 600);
+    _this.windMap = new _physics_wind_map__WEBPACK_IMPORTED_MODULE_6__["default"](1200, 800);
     _this.model = new _physics_model__WEBPACK_IMPORTED_MODULE_4__["default"](new _physics_boat__WEBPACK_IMPORTED_MODULE_5__["default"](), _this.windMap);
     _this.state = {
       model: _this.model
@@ -941,7 +1165,7 @@ function (_React$Component) {
           'display': 'flex'
         }
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_display_top_diagram__WEBPACK_IMPORTED_MODULE_1__["default"], {
-        boat: this.state.model.boat
+        model: this.state.model
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_display_main_display__WEBPACK_IMPORTED_MODULE_2__["default"], {
         model: this.state.model,
         boat: this.state.model.boat,
@@ -1075,7 +1299,7 @@ function () {
 /*!****************************************************!*\
   !*** ./javascripts/components/util/vector_util.js ***!
   \****************************************************/
-/*! exports provided: vectorMag, getUnitVector, getHeading, getHeadingDeg, toDegrees, toRadians */
+/*! exports provided: vectorMag, getUnitVector, getHeading, getHeadingDeg, toDegrees, toRadians, vectorSum */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1086,6 +1310,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getHeadingDeg", function() { return getHeadingDeg; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "toDegrees", function() { return toDegrees; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "toRadians", function() { return toRadians; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "vectorSum", function() { return vectorSum; });
 var vectorMag = function vectorMag(vector) {
   var dx = vector[0];
   var dy = vector[1];
@@ -1093,11 +1318,21 @@ var vectorMag = function vectorMag(vector) {
 };
 var getUnitVector = function getUnitVector(vector) {
   var mag = vectorMag(vector);
-  return [vector[0] / mag, vector[1] / mag];
+
+  if (mag > 0) {
+    return [vector[0] / mag, vector[1] / mag];
+  } else {
+    return [0, 0];
+  }
 };
 var getHeading = function getHeading(vector) {
   var x = vector[0];
   var y = vector[1];
+
+  if (x === 0 || y === 0) {
+    return 0;
+  }
+
   var posX = Math.abs(x);
   var posY = Math.abs(y);
   var angle = Math.atan(posY / posX);
@@ -1115,6 +1350,9 @@ var toDegrees = function toDegrees(radAngle) {
 };
 var toRadians = function toRadians(degAngle) {
   return degAngle * Math.PI / 180;
+};
+var vectorSum = function vectorSum(vectorA, vectorB) {
+  return [vectorA[0] + vectorB[0], vectorA[1], vectorB[1]];
 };
 
 /***/ }),

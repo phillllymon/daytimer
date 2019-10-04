@@ -10,7 +10,7 @@ class Simulation extends React.Component {
     constructor(props) {
         super(props);
         this.inputManager = new InputManager();
-        this.windMap = new WindMap(800, 600);
+        this.windMap = new WindMap(1200, 800);
         this.model = new Model(new Boat, this.windMap);
         this.state = {
             model: this.model
@@ -49,7 +49,7 @@ class Simulation extends React.Component {
         return (
             <div style={{'display' : 'flex'}}>
                 <TopDiagram   
-                    boat={this.state.model.boat}
+                    model={this.state.model}
                 />
                 <MainDisplay
                     model={this.state.model}

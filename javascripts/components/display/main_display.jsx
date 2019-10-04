@@ -20,7 +20,7 @@ class MainDisplay extends React.Component {
 
     clearDisplay() {
         this.ctx.fillStyle = 'darkblue';
-        this.ctx.fillRect(0, 0, 800, 600);
+        this.ctx.fillRect(0, 0, 1200, 800);
     }
 
     drawModel() {
@@ -121,7 +121,7 @@ class MainDisplay extends React.Component {
         //display sailDrag arrow
         let dragVec = model.dragOnSail;
         let dragDir = getUnitVector(dragVec);
-        let dragMag = vectorMag(dragVec)/500;
+        let dragMag = vectorMag(dragVec)*3;
         ctx.beginPath();
         ctx.strokeStyle = 'orange';
         ctx.moveTo(80 * dragDir[0], 80 * dragDir[1]);
@@ -137,14 +137,20 @@ class MainDisplay extends React.Component {
         ctx.moveTo(40, 40);
         ctx.lineTo(40 + trueVec[0], 40 + trueVec[1]);
         ctx.stroke();
+
+        //vertical line
+        // ctx.beginPath();
+        // ctx.moveTo(400, 0);
+        // ctx.lineTo(400, 600);
+        // ctx.stroke();
     }
 
     render() {
         return (
             <div>
                 <canvas ref="canvas"
-                    width="800px"
-                    height="600px"
+                    width="1200px"
+                    height="800px"
                 />
             </div>
         );

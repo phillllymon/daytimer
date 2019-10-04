@@ -2,8 +2,14 @@ import React from 'react';
 import {
     toRadians,
     toDegrees,
-    getHeading
+    getHeading,
+    vectorMag
 } from '../util/vector_util';
+import {
+    makeInArrow,
+    makeOutArrow,
+    makeStreamRipple
+} from './canvas_helper';
 
 class TopDiagram extends React.Component {
     constructor(props) {
@@ -32,9 +38,16 @@ class TopDiagram extends React.Component {
     }
 
     drawBoat() {
-        let boat = this.props.boat;
+        let model = this.props.model;
+        let boat = model.boat;
         let ctx = this.ctx;
 
+        //streamRipples
+        makeStreamRipple(ctx, 150, 80, boat.velocity, boat.heading);
+        makeStreamRipple(ctx, 183, 210, boat.velocity, boat.heading);
+        makeStreamRipple(ctx, 117, 210, boat.velocity, boat.heading);
+
+        //boat
         ctx.beginPath();
         ctx.fillStyle = 'brown';
         ctx.beginPath();
@@ -55,49 +68,54 @@ class TopDiagram extends React.Component {
         let appSpeed = boat.appWindSpeed;
         let appHeading = getHeading(appDir);
         let relAppHeading = toRadians(toDegrees(appHeading) - boat.heading);
+        makeInArrow(ctx, 150, 150, relAppHeading, 100, appSpeed, 6, 'lightblue');
 
+        //windDragArrow
+        // let dragAmt = vectorMag(model.dragOnSail);
+        // let relDragHeading = relAppHeading; //should be same as apparent wind
+        // makeOutArrow(ctx, 150, 150, relDragHeading, 50, dragAmt, 6, 'red');
 
-        this.appHeading = appHeading;
-        this.appDir = appDir;
-        ctx.beginPath();
-        ctx.lineWidth = 6;
-        ctx.strokeStyle = 'lightblue';
-        //ctx.arc(150, 150, 100, 0, 2 * Math.PI, true);
-        ctx.moveTo(
-            150 - (100 * Math.sin(relAppHeading)),
-            150 + (100 * Math.cos(relAppHeading))
-        );
-        ctx.moveTo(
-            150 - (100 * Math.sin(relAppHeading)),
-            150 + (100 * Math.cos(relAppHeading))
-        );
-        ctx.lineTo(
-            150 - ((100 + appSpeed) * Math.sin(relAppHeading)),
-            150 + ((100 + appSpeed) * Math.cos(relAppHeading))
-        );
-        ctx.stroke();
-        ctx.lineWidth = 1;
-        ctx.fillStyle = 'lightblue';
-        //arrowheads
-        ctx.moveTo(
-            150 - (98 * Math.sin(relAppHeading)),
-            150 + (98 * Math.cos(relAppHeading))
-        );
-        ctx.lineTo(
-            150 - ((108) * Math.sin(relAppHeading + 0.15)),
-            150 + ((108) * Math.cos(relAppHeading + 0.15))
-        );
-        // ctx.moveTo(
-        //     150 - (100 * Math.sin(relAppHeading)),
-        //     150 + (100 * Math.cos(relAppHeading))
-        // );
-        ctx.lineTo(
-            150 - ((108) * Math.sin(relAppHeading - 0.15)),
-            150 + ((108) * Math.cos(relAppHeading - 0.15))
-        );
-        ctx.closePath();
-        ctx.stroke();
-        ctx.fill();
+        //windLiftArrow
+        // let liftVec = model.liftOnSail;
+        // let liftAmt = vectorMag(liftVec);
+        // let liftHeading = getHeading(liftVec);
+        // let relLiftHeading = toRadians(toDegrees(liftHeading) - boat.heading);
+        // makeOutArrow(ctx, 150, 150, relLiftHeading, 50, liftAmt, 6, 'green');
+
+        //windForceArrow
+        let forceVec = model.forceOnSail;
+        let forceAmt = vectorMag(forceVec);
+        let forceHeading = getHeading(forceVec);
+        let relForceHeading = toRadians(toDegrees(forceHeading) - boat.heading);
+        makeOutArrow(ctx, 150, 150, relForceHeading, 50, forceAmt, 6, 'green');
+
+        //boardDragArrow
+        // let boardDragVec = model.dragOnBoard;
+        // let boardDragAmt = vectorMag(boardDragVec);
+        // let boardDragHeading = getHeading(boardDragVec);
+        // let relBoardDragHeading = toRadians(toDegrees(boardDragHeading) - boat.heading);
+        // makeOutArrow(ctx, 150, 150, relBoardDragHeading, 70, boardDragAmt, 6, 'red');
+
+        //boardLiftArrow
+        // let boardLiftVec = model.liftOnBoard;
+        // let boardLiftAmt = vectorMag(boardLiftVec);
+        // let boardLiftHeading = getHeading(boardLiftVec);
+        // let relBoardLiftHeading = toRadians(toDegrees(boardLiftHeading) - boat.heading);
+        // makeOutArrow(ctx, 150, 150, relBoardLiftHeading, 50, boardLiftAmt, 6, 'green');
+
+        //boardForceArrow
+        let boardForceVec = model.forceOnBoard;
+        let boardForceAmt = vectorMag(boardForceVec);
+        let boardForceHeading = getHeading(boardForceVec);
+        let relBoardForceHeading = toRadians(toDegrees(boardForceHeading) - boat.heading);
+        makeOutArrow(ctx, 150, 150, relBoardForceHeading, 50, boardForceAmt, 6, 'red');
+
+        //totalForceArrow
+        let totalForceVec = model.totalForce;
+        let totalForceAmt = vectorMag(totalForceVec);
+        let totalForceHeading = getHeading(totalForceVec);
+        let reltotalForceHeading = toRadians(toDegrees(totalForceHeading) - boat.heading);
+        makeOutArrow(ctx, 150, 150, reltotalForceHeading, 50, totalForceAmt, 6, 'black');
 
         //sheetAngleIndicator
         let sheetAngle = toRadians(boat.mainSheetPos);
@@ -166,15 +184,15 @@ class TopDiagram extends React.Component {
     render (){
         return (
             <div>
-                x: {this.appDir[0]}
+                x: {this.props.model.liftOnSail[0]}
                 <br/>
-                y: {this.appDir[1]}
+                y: {this.props.model.liftOnSail[1]}
                 <br />
                 appHeading: {Math.round(toDegrees(this.appHeading))}
                 <br />
-                app wind speed: {Math.round(this.props.boat.appWindSpeed)}
+                app wind speed: {Math.round(this.props.model.boat.appWindSpeed)}
                 <br/>
-                diff: {Math.round(toDegrees(this.appHeading) - this.props.boat.heading)}
+                tack: {this.props.model.boat.tack}
                 <canvas ref="canvas"
                     width="300px"
                     height="300px"

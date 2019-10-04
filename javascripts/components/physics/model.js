@@ -3,6 +3,12 @@ class Model {
         this.boat = boat;
         this.windMap = windMap;
         this.dragOnSail = [0, 0];
+        this.liftOnSail = [0, 0];
+        this.forceOnSail = [0, 0];
+        this.dragOnBoard = [0, 0];
+        this.liftOnBoard = [0, 0];
+        this.forceOnBoard = [0, 0];
+        this.totalForce = [0, 0];
     }
 
     update(inputs, dt) {
@@ -24,7 +30,16 @@ class Model {
 
         this.boat.calculateAppWind(this.windMap.windHeading, this.windMap.windSpeed);
         this.dragOnSail = this.boat.calculateDragOnSail();
+        this.liftOnSail = this.boat.calculateLiftOnSail();
+        this.forceOnSail = this.boat.calculateForceOnSail();
+
+        this.dragOnBoard = this.boat.calculateDragOnCenterBoard();
+        this.liftOnBoard = this.boat.calculateLiftOnCenterBoard();
+        this.forceOnBoard = this.boat.calculateForceOnCenterBoard();
         
+        this.totalForce = this.boat.calculateTotalForceOnBoat();
+        
+        this.boat.updateVelocity(dt);
         this.boat.updatePosition(dt);
         this.boat.updateHeading(dt);
         this.boat.updateSailAngle(dt);

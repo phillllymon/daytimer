@@ -8,7 +8,7 @@ import {
 
 class WindMap {
     constructor(width, height) {
-        this.windSpeed = 30;
+        this.windSpeed = 60;
         this.windHeading = 0;
         this.width = width;
         this.height = height;
