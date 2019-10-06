@@ -1,12 +1,53 @@
 import React from 'react';
+import ArrowButton from './arrow_button';
 import {
     getUnitVector,
     vectorMag
 } from '../util/vector_util';
+import {
+    drawForceArrows
+} from './canvas_helper';
 
 class MainDisplay extends React.Component {
     constructor(props) {
         super(props);
+        this.width = 1200;
+        this.height = 800;
+
+        this.arrows = {
+            appWind: true,
+            sailLift: false,
+            dragOnSail: false,
+            sailForce: false,
+            boardLift: false,
+            boardDrag: false,
+            boardForce: false,
+            totalForce: false,
+        };
+
+        this.arrowColors = {
+            appWind: 'lightblue',
+            sailLift: 'green',
+            dragOnSail: 'red',
+            sailForce: 'black',
+            boardLift: 'green',
+            boardDrag: 'red',
+            boardForce: 'black',
+            totalForce: 'black'
+        }
+
+        this.centerBoat = this.centerBoat.bind(this);
+        this.toggleArrow = this.toggleArrow.bind(this);
+        this.setArrowColor = this.setArrowColor.bind(this);
+    }
+
+    toggleArrow(e) {
+        let val = this.arrows[e.target.id];
+        this.arrows[e.target.id] = val ? false : true;
+    }
+
+    setArrowColor(arrow, color) {
+        this.arrowColors[arrow] = color;
     }
 
     componentDidMount() {
@@ -86,48 +127,9 @@ class MainDisplay extends React.Component {
         ctx.lineTo(boomEndpoint[0], boomEndpoint[1]);
         ctx.stroke();
 
+        drawForceArrows(ctx, 0, 0, this.arrows, model, boat, this.arrowColors);
+
         ctx.rotate(-dir);
-
-        //display app wind arrow
-        // let appDir = boat.appWindDir;
-        // let appSpeed = boat.appWindSpeed;
-        // ctx.beginPath();
-        // ctx.lineWidth = 3;
-        // ctx.moveTo(40*appDir[0], 40*appDir[1]);
-        // ctx.lineTo((40 + appSpeed)*appDir[0], (40 + appSpeed)*appDir[1]);
-        // ctx.stroke();
-
-        //display wind drag arrow
-        // let dragDir = appDir;
-        // let dragSpeed = 20;
-        // ctx.beginPath();
-        // ctx.strokeStyle = 'blue';
-        // ctx.moveTo(60*appDir[0], 60*appDir[1]);
-        // ctx.lineTo((60 + dragSpeed) * dragDir[0], (60 + dragSpeed) * dragDir[1]);
-        // ctx.stroke();
-
-        //display wind lift arrow
-        // let liftDir = [-dragDir[1], dragDir[0]];
-        // if (dragDir[0] < 0) {
-        //     liftDir = [dragDir[1], -dragDir[0]];
-        // }
-        // let liftSpeed = 20;
-        // ctx.beginPath();
-        // ctx.strokeStyle = 'green';
-        // ctx.moveTo(60 * liftDir[0], 60 * liftDir[1]);
-        // ctx.lineTo((60 + liftSpeed) * liftDir[0], (60 + liftSpeed) * liftDir[1]);
-        // ctx.stroke();
-
-        //display sailDrag arrow
-        let dragVec = model.dragOnSail;
-        let dragDir = getUnitVector(dragVec);
-        let dragMag = vectorMag(dragVec)*3;
-        ctx.beginPath();
-        ctx.strokeStyle = 'orange';
-        ctx.moveTo(80 * dragDir[0], 80 * dragDir[1]);
-        ctx.lineTo((80 + dragMag) * dragDir[0], (80 + dragMag) * dragDir[1]);
-        ctx.stroke();               //no worky
-
         ctx.translate(-(pos[0]), -(pos[1]));
 
         //display true wind
@@ -145,9 +147,39 @@ class MainDisplay extends React.Component {
         // ctx.stroke();
     }
 
+    mainControls() {
+        let that = this;
+        return (
+            <div style={{'display' : 'flex'}}>
+                <button onClick={this.centerBoat}>re-center boat</button>
+                {
+                    Object.keys(this.arrows).map((key, idx) => {
+                        return (
+                        <div key={idx}>
+                            <ArrowButton 
+                                arrow={key}
+                                active={that.arrows[key]} 
+                                color={that.arrowColors[key]}
+                                setArrowColor={this.setArrowColor}
+                                toggleArrow={this.toggleArrow}
+                            />
+                        </div>
+                        );
+                
+                    })
+            }
+            </div>
+        );
+    }
+
+    centerBoat() {
+        this.props.model.boat.position = [this.width / 2, this.height / 2];
+    }
+
     render() {
         return (
             <div>
+                {this.mainControls()}
                 <canvas ref="canvas"
                     width="1200px"
                     height="800px"

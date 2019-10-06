@@ -87,5 +87,79 @@ export const makeStreamRipple = (ctx, x, y, velocity, heading) => {
         y + streamVector[1]
     );
     ctx.stroke();
-}
+};
+
+export const drawForceArrows = (ctx, x, y, arrows, model, boat, arrowColors = {}) => {
+
+    //apparentWindArrow
+    let appDir = boat.appWindDir;
+    let appSpeed = boat.appWindSpeed;
+    let appHeading = getHeading(appDir);
+    let relAppHeading = toRadians(toDegrees(appHeading) - boat.heading);
+    if (arrows.appWind) {
+        makeInArrow(ctx, x, y, relAppHeading, 100, appSpeed, 6, (arrowColors.appWind ? arrowColors.appWind : 'lightblue'));
+    }
+
+    //windDragArrow
+    //let appDir = boat.appWindDir;
+    let dragAmt = vectorMag(model.dragOnSail);
+    let relDragHeading = toRadians(toDegrees(getHeading(appDir)) - boat.heading);
+    if (arrows.dragOnSail) {
+        makeOutArrow(ctx, x, y, relDragHeading, 50, dragAmt, 6, (arrowColors.dragOnSail ? arrowColors.dragOnSail : 'lightblue'));
+    }
+
+    //windLiftArrow
+    let liftVec = model.liftOnSail;
+    let liftAmt = vectorMag(liftVec);
+    let liftHeading = getHeading(liftVec);
+    let relLiftHeading = toRadians(toDegrees(liftHeading) - boat.heading);
+    if (arrows.sailLift) {
+        makeOutArrow(ctx, x, y, relLiftHeading, 50, liftAmt, 6, (arrowColors.sailLift ? arrowColors.sailLift : 'lightblue'));
+    }
+
+    //windForceArrow
+    let forceVec = model.forceOnSail;
+    let forceAmt = vectorMag(forceVec);
+    let forceHeading = getHeading(forceVec);
+    let relForceHeading = toRadians(toDegrees(forceHeading) - boat.heading);
+    if (arrows.sailForce) {
+        makeOutArrow(ctx, x, y, relForceHeading, 50, forceAmt, 6, (arrowColors.sailForce ? arrowColors.sailForce : 'lightblue'));
+    }
+
+    //boardDragArrow
+    let boardDragVec = model.dragOnBoard;
+    let boardDragAmt = vectorMag(boardDragVec);
+    let boardDragHeading = getHeading(boardDragVec);
+    let relBoardDragHeading = toRadians(toDegrees(boardDragHeading) - boat.heading);
+    if (arrows.boardDrag) {
+        makeOutArrow(ctx, x, y, relBoardDragHeading, 70, boardDragAmt, 6, (arrowColors.boardDrag ? arrowColors.boardDrag : 'lightblue'));
+    }
+
+    //boardLiftArrow
+    let boardLiftVec = model.liftOnBoard;
+    let boardLiftAmt = vectorMag(boardLiftVec);
+    let boardLiftHeading = getHeading(boardLiftVec);
+    let relBoardLiftHeading = toRadians(toDegrees(boardLiftHeading) - boat.heading);
+    if (arrows.boardLift) {
+        makeOutArrow(ctx, x, y, relBoardLiftHeading, 50, boardLiftAmt, 6, (arrowColors.boardLift ? arrowColors.boardLift : 'lightblue'));
+    }
+
+    //boardForceArrow
+    let boardForceVec = model.forceOnBoard;
+    let boardForceAmt = vectorMag(boardForceVec);
+    let boardForceHeading = getHeading(boardForceVec);
+    let relBoardForceHeading = toRadians(toDegrees(boardForceHeading) - boat.heading);
+    if (arrows.boardForce) {
+        makeOutArrow(ctx, x, y, relBoardForceHeading, 50, boardForceAmt, 6, (arrowColors.boardForce ? arrowColors.boardForce : 'lightblue'));
+    }
+
+    //totalForceArrow
+    let totalForceVec = model.totalForce;
+    let totalForceAmt = vectorMag(totalForceVec);
+    let totalForceHeading = getHeading(totalForceVec);
+    let reltotalForceHeading = toRadians(toDegrees(totalForceHeading) - boat.heading);
+    if (arrows.totalForce) {
+        makeOutArrow(ctx, x, y, reltotalForceHeading, 50, totalForceAmt, 6, (arrowColors.totalForce ? arrowColors.totalForce : 'lightblue'));
+    }
+};
 

@@ -86,11 +86,156 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./javascripts/components/display/arrow_button.jsx":
+/*!*********************************************************!*\
+  !*** ./javascripts/components/display/arrow_button.jsx ***!
+  \*********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+var ArrowButton =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(ArrowButton, _React$Component);
+
+  function ArrowButton(props) {
+    var _this;
+
+    _classCallCheck(this, ArrowButton);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(ArrowButton).call(this, props));
+    _this.changeColor = _this.changeColor.bind(_assertThisInitialized(_this));
+    _this.colorMenu = _this.colorMenu.bind(_assertThisInitialized(_this));
+    _this.toggleColorMenu = _this.toggleColorMenu.bind(_assertThisInitialized(_this));
+    _this.state = {
+      showColors: false
+    };
+    _this.colors = ['red', 'blue', 'lightblue', 'darkblue', 'green', 'black', 'white'];
+    _this.forceLabels = {
+      appWind: 'Apparent Wind',
+      sailLift: 'Lift on Sail',
+      dragOnSail: 'Drag on Sail',
+      sailForce: 'Force on Sail',
+      boardLift: 'Lift on Centerboard',
+      boardDrag: 'Drag on Centerboard',
+      boardForce: 'Force on Centerboard',
+      totalForce: 'Total Force on Boat'
+    };
+    return _this;
+  }
+
+  _createClass(ArrowButton, [{
+    key: "toggleColorMenu",
+    value: function toggleColorMenu() {
+      this.setState({
+        showColors: this.state.showColors ? false : true
+      });
+    }
+  }, {
+    key: "changeColor",
+    value: function changeColor(color) {
+      this.props.setArrowColor(this.props.arrow, color);
+      this.toggleColorMenu();
+    }
+  }, {
+    key: "colorMenu",
+    value: function colorMenu() {
+      var that = this;
+
+      if (this.state.showColors) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          style: {
+            'position': 'relative'
+          }
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          style: {
+            'display': 'flex',
+            'position': 'absolute',
+            'top': '20px',
+            'left': '-20px'
+          }
+        }, this.colors.map(function (color, idx) {
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+            key: idx,
+            onClick: function onClick() {
+              return that.changeColor(color);
+            },
+            style: {
+              'height': '20px',
+              'width': '20px',
+              'borderRadius': '10px',
+              'backgroundColor': "".concat(color)
+            }
+          });
+        })));
+      } else {
+        return null;
+      }
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        style: {
+          'display': 'flex',
+          'justifyContent': 'center'
+        }
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        style: {
+          'height': '20px',
+          'width': '20px',
+          'borderRadius': '10px',
+          'marginLeft': '10px',
+          'backgroundColor': "".concat(this.props.color)
+        },
+        onClick: this.toggleColorMenu
+      }), this.colorMenu(), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "arrowButton",
+        style: this.props.active ? {
+          'background-color': this.props.color
+        } : {},
+        id: this.props.arrow,
+        onClick: this.props.toggleArrow
+      }, this.forceLabels[this.props.arrow]));
+    }
+  }]);
+
+  return ArrowButton;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
+
+/* harmony default export */ __webpack_exports__["default"] = (ArrowButton);
+
+/***/ }),
+
 /***/ "./javascripts/components/display/canvas_helper.js":
 /*!*********************************************************!*\
   !*** ./javascripts/components/display/canvas_helper.js ***!
   \*********************************************************/
-/*! exports provided: makeInArrow, makeOutArrow, makeStreamRipple */
+/*! exports provided: makeInArrow, makeOutArrow, makeStreamRipple, drawForceArrows */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -98,6 +243,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "makeInArrow", function() { return makeInArrow; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "makeOutArrow", function() { return makeOutArrow; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "makeStreamRipple", function() { return makeStreamRipple; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawForceArrows", function() { return drawForceArrows; });
 /* harmony import */ var _util_vector_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/vector_util */ "./javascripts/components/util/vector_util.js");
 
 var makeInArrow = function makeInArrow(ctx, x, y, angle, offset, length, width, color) {
@@ -145,6 +291,87 @@ var makeStreamRipple = function makeStreamRipple(ctx, x, y, velocity, heading) {
   ctx.lineTo(x - streamVector[0], y + streamVector[1]);
   ctx.stroke();
 };
+var drawForceArrows = function drawForceArrows(ctx, x, y, arrows, model, boat) {
+  var arrowColors = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : {};
+  //apparentWindArrow
+  var appDir = boat.appWindDir;
+  var appSpeed = boat.appWindSpeed;
+  var appHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getHeading"])(appDir);
+  var relAppHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toDegrees"])(appHeading) - boat.heading);
+
+  if (arrows.appWind) {
+    makeInArrow(ctx, x, y, relAppHeading, 100, appSpeed, 6, arrowColors.appWind ? arrowColors.appWind : 'lightblue');
+  } //windDragArrow
+  //let appDir = boat.appWindDir;
+
+
+  var dragAmt = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["vectorMag"])(model.dragOnSail);
+  var relDragHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toDegrees"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getHeading"])(appDir)) - boat.heading);
+
+  if (arrows.dragOnSail) {
+    makeOutArrow(ctx, x, y, relDragHeading, 50, dragAmt, 6, arrowColors.dragOnSail ? arrowColors.dragOnSail : 'lightblue');
+  } //windLiftArrow
+
+
+  var liftVec = model.liftOnSail;
+  var liftAmt = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["vectorMag"])(liftVec);
+  var liftHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getHeading"])(liftVec);
+  var relLiftHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toDegrees"])(liftHeading) - boat.heading);
+
+  if (arrows.sailLift) {
+    makeOutArrow(ctx, x, y, relLiftHeading, 50, liftAmt, 6, arrowColors.sailLift ? arrowColors.sailLift : 'lightblue');
+  } //windForceArrow
+
+
+  var forceVec = model.forceOnSail;
+  var forceAmt = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["vectorMag"])(forceVec);
+  var forceHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getHeading"])(forceVec);
+  var relForceHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toDegrees"])(forceHeading) - boat.heading);
+
+  if (arrows.sailForce) {
+    makeOutArrow(ctx, x, y, relForceHeading, 50, forceAmt, 6, arrowColors.sailForce ? arrowColors.sailForce : 'lightblue');
+  } //boardDragArrow
+
+
+  var boardDragVec = model.dragOnBoard;
+  var boardDragAmt = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["vectorMag"])(boardDragVec);
+  var boardDragHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getHeading"])(boardDragVec);
+  var relBoardDragHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toDegrees"])(boardDragHeading) - boat.heading);
+
+  if (arrows.boardDrag) {
+    makeOutArrow(ctx, x, y, relBoardDragHeading, 70, boardDragAmt, 6, arrowColors.boardDrag ? arrowColors.boardDrag : 'lightblue');
+  } //boardLiftArrow
+
+
+  var boardLiftVec = model.liftOnBoard;
+  var boardLiftAmt = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["vectorMag"])(boardLiftVec);
+  var boardLiftHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getHeading"])(boardLiftVec);
+  var relBoardLiftHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toDegrees"])(boardLiftHeading) - boat.heading);
+
+  if (arrows.boardLift) {
+    makeOutArrow(ctx, x, y, relBoardLiftHeading, 50, boardLiftAmt, 6, arrowColors.boardLift ? arrowColors.boardLift : 'lightblue');
+  } //boardForceArrow
+
+
+  var boardForceVec = model.forceOnBoard;
+  var boardForceAmt = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["vectorMag"])(boardForceVec);
+  var boardForceHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getHeading"])(boardForceVec);
+  var relBoardForceHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toDegrees"])(boardForceHeading) - boat.heading);
+
+  if (arrows.boardForce) {
+    makeOutArrow(ctx, x, y, relBoardForceHeading, 50, boardForceAmt, 6, arrowColors.boardForce ? arrowColors.boardForce : 'lightblue');
+  } //totalForceArrow
+
+
+  var totalForceVec = model.totalForce;
+  var totalForceAmt = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["vectorMag"])(totalForceVec);
+  var totalForceHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getHeading"])(totalForceVec);
+  var reltotalForceHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toDegrees"])(totalForceHeading) - boat.heading);
+
+  if (arrows.totalForce) {
+    makeOutArrow(ctx, x, y, reltotalForceHeading, 50, totalForceAmt, 6, arrowColors.totalForce ? arrowColors.totalForce : 'lightblue');
+  }
+};
 
 /***/ }),
 
@@ -159,7 +386,9 @@ var makeStreamRipple = function makeStreamRipple(ctx, x, y, velocity, heading) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _util_vector_util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../util/vector_util */ "./javascripts/components/util/vector_util.js");
+/* harmony import */ var _arrow_button__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./arrow_button */ "./javascripts/components/display/arrow_button.jsx");
+/* harmony import */ var _util_vector_util__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../util/vector_util */ "./javascripts/components/util/vector_util.js");
+/* harmony import */ var _canvas_helper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./canvas_helper */ "./javascripts/components/display/canvas_helper.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -170,13 +399,15 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
 
 
 
@@ -187,12 +418,51 @@ function (_React$Component) {
   _inherits(MainDisplay, _React$Component);
 
   function MainDisplay(props) {
+    var _this;
+
     _classCallCheck(this, MainDisplay);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(MainDisplay).call(this, props));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(MainDisplay).call(this, props));
+    _this.width = 1200;
+    _this.height = 800;
+    _this.arrows = {
+      appWind: true,
+      sailLift: false,
+      dragOnSail: false,
+      sailForce: false,
+      boardLift: false,
+      boardDrag: false,
+      boardForce: false,
+      totalForce: false
+    };
+    _this.arrowColors = {
+      appWind: 'lightblue',
+      sailLift: 'green',
+      dragOnSail: 'red',
+      sailForce: 'black',
+      boardLift: 'green',
+      boardDrag: 'red',
+      boardForce: 'black',
+      totalForce: 'black'
+    };
+    _this.centerBoat = _this.centerBoat.bind(_assertThisInitialized(_this));
+    _this.toggleArrow = _this.toggleArrow.bind(_assertThisInitialized(_this));
+    _this.setArrowColor = _this.setArrowColor.bind(_assertThisInitialized(_this));
+    return _this;
   }
 
   _createClass(MainDisplay, [{
+    key: "toggleArrow",
+    value: function toggleArrow(e) {
+      var val = this.arrows[e.target.id];
+      this.arrows[e.target.id] = val ? false : true;
+    }
+  }, {
+    key: "setArrowColor",
+    value: function setArrowColor(arrow, color) {
+      this.arrowColors[arrow] = color;
+    }
+  }, {
     key: "componentDidMount",
     value: function componentDidMount() {
       this.ctx = this.refs.canvas.getContext('2d');
@@ -267,44 +537,8 @@ function (_React$Component) {
       ctx.moveTo(0, -15);
       ctx.lineTo(boomEndpoint[0], boomEndpoint[1]);
       ctx.stroke();
-      ctx.rotate(-dir); //display app wind arrow
-      // let appDir = boat.appWindDir;
-      // let appSpeed = boat.appWindSpeed;
-      // ctx.beginPath();
-      // ctx.lineWidth = 3;
-      // ctx.moveTo(40*appDir[0], 40*appDir[1]);
-      // ctx.lineTo((40 + appSpeed)*appDir[0], (40 + appSpeed)*appDir[1]);
-      // ctx.stroke();
-      //display wind drag arrow
-      // let dragDir = appDir;
-      // let dragSpeed = 20;
-      // ctx.beginPath();
-      // ctx.strokeStyle = 'blue';
-      // ctx.moveTo(60*appDir[0], 60*appDir[1]);
-      // ctx.lineTo((60 + dragSpeed) * dragDir[0], (60 + dragSpeed) * dragDir[1]);
-      // ctx.stroke();
-      //display wind lift arrow
-      // let liftDir = [-dragDir[1], dragDir[0]];
-      // if (dragDir[0] < 0) {
-      //     liftDir = [dragDir[1], -dragDir[0]];
-      // }
-      // let liftSpeed = 20;
-      // ctx.beginPath();
-      // ctx.strokeStyle = 'green';
-      // ctx.moveTo(60 * liftDir[0], 60 * liftDir[1]);
-      // ctx.lineTo((60 + liftSpeed) * liftDir[0], (60 + liftSpeed) * liftDir[1]);
-      // ctx.stroke();
-      //display sailDrag arrow
-
-      var dragVec = model.dragOnSail;
-      var dragDir = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["getUnitVector"])(dragVec);
-      var dragMag = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["vectorMag"])(dragVec) * 3;
-      ctx.beginPath();
-      ctx.strokeStyle = 'orange';
-      ctx.moveTo(80 * dragDir[0], 80 * dragDir[1]);
-      ctx.lineTo((80 + dragMag) * dragDir[0], (80 + dragMag) * dragDir[1]);
-      ctx.stroke(); //no worky
-
+      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_3__["drawForceArrows"])(ctx, 0, 0, this.arrows, model, boat, this.arrowColors);
+      ctx.rotate(-dir);
       ctx.translate(-pos[0], -pos[1]); //display true wind
 
       var trueVec = windMap.getWindVector();
@@ -319,9 +553,38 @@ function (_React$Component) {
       // ctx.stroke();
     }
   }, {
+    key: "mainControls",
+    value: function mainControls() {
+      var _this2 = this;
+
+      var that = this;
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        style: {
+          'display': 'flex'
+        }
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        onClick: this.centerBoat
+      }, "re-center boat"), Object.keys(this.arrows).map(function (key, idx) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          key: idx
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_arrow_button__WEBPACK_IMPORTED_MODULE_1__["default"], {
+          arrow: key,
+          active: that.arrows[key],
+          color: that.arrowColors[key],
+          setArrowColor: _this2.setArrowColor,
+          toggleArrow: _this2.toggleArrow
+        }));
+      }));
+    }
+  }, {
+    key: "centerBoat",
+    value: function centerBoat() {
+      this.props.model.boat.position = [this.width / 2, this.height / 2];
+    }
+  }, {
     key: "render",
     value: function render() {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("canvas", {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, this.mainControls(), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("canvas", {
         ref: "canvas",
         width: "1200px",
         height: "800px"
@@ -488,7 +751,7 @@ function (_React$Component) {
     _this.arrows = {
       appWind: true,
       sailLift: false,
-      sailDrag: false,
+      dragOnSail: false,
       sailForce: false,
       boardLift: false,
       boardDrag: true,
@@ -551,85 +814,8 @@ function (_React$Component) {
       ctx.fillStyle = 'black';
       ctx.beginPath();
       ctx.arc(150, 115, 3, 0, 2 * Math.PI, true);
-      ctx.fill(); //apparentWindArrow
-
-      var appDir = boat.appWindDir;
-      var appSpeed = boat.appWindSpeed;
-      var appHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["getHeading"])(appDir);
-      var relAppHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toDegrees"])(appHeading) - boat.heading);
-
-      if (this.arrows.appWind) {
-        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, 150, 150, relAppHeading, 100, appSpeed, 6, 'lightblue');
-      } //windDragArrow
-
-
-      var dragAmt = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["vectorMag"])(model.dragOnSail);
-      var relDragHeading = relAppHeading; //should be same as apparent wind
-
-      if (this.arrows.sailDrag) {
-        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeOutArrow"])(ctx, 150, 150, relDragHeading, 50, dragAmt, 6, 'red');
-      } //windLiftArrow
-
-
-      var liftVec = model.liftOnSail;
-      var liftAmt = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["vectorMag"])(liftVec);
-      var liftHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["getHeading"])(liftVec);
-      var relLiftHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toDegrees"])(liftHeading) - boat.heading);
-
-      if (this.arrows.sailLift) {
-        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeOutArrow"])(ctx, 150, 150, relLiftHeading, 50, liftAmt, 6, 'green');
-      } //windForceArrow
-
-
-      var forceVec = model.forceOnSail;
-      var forceAmt = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["vectorMag"])(forceVec);
-      var forceHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["getHeading"])(forceVec);
-      var relForceHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toDegrees"])(forceHeading) - boat.heading);
-
-      if (this.arrows.sailForce) {
-        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeOutArrow"])(ctx, 150, 150, relForceHeading, 50, forceAmt, 6, 'green');
-      } //boardDragArrow
-
-
-      var boardDragVec = model.dragOnBoard;
-      var boardDragAmt = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["vectorMag"])(boardDragVec);
-      var boardDragHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["getHeading"])(boardDragVec);
-      var relBoardDragHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toDegrees"])(boardDragHeading) - boat.heading);
-
-      if (this.arrows.boardDrag) {
-        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeOutArrow"])(ctx, 150, 150, relBoardDragHeading, 70, boardDragAmt, 6, 'red');
-      } //boardLiftArrow
-
-
-      var boardLiftVec = model.liftOnBoard;
-      var boardLiftAmt = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["vectorMag"])(boardLiftVec);
-      var boardLiftHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["getHeading"])(boardLiftVec);
-      var relBoardLiftHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toDegrees"])(boardLiftHeading) - boat.heading);
-
-      if (this.arrows.boardLift) {
-        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeOutArrow"])(ctx, 150, 150, relBoardLiftHeading, 50, boardLiftAmt, 6, 'green');
-      } //boardForceArrow
-
-
-      var boardForceVec = model.forceOnBoard;
-      var boardForceAmt = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["vectorMag"])(boardForceVec);
-      var boardForceHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["getHeading"])(boardForceVec);
-      var relBoardForceHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toDegrees"])(boardForceHeading) - boat.heading);
-
-      if (this.arrows.boardForce) {
-        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeOutArrow"])(ctx, 150, 150, relBoardForceHeading, 50, boardForceAmt, 6, 'red');
-      } //totalForceArrow
-
-
-      var totalForceVec = model.totalForce;
-      var totalForceAmt = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["vectorMag"])(totalForceVec);
-      var totalForceHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["getHeading"])(totalForceVec);
-      var reltotalForceHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toDegrees"])(totalForceHeading) - boat.heading);
-
-      if (this.arrows.totalForce) {
-        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeOutArrow"])(ctx, 150, 150, reltotalForceHeading, 50, totalForceAmt, 6, 'black');
-      } //sheetAngleIndicator
-
+      ctx.fill();
+      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["drawForceArrows"])(ctx, 150, 150, this.arrows, model, boat); //sheetAngleIndicator
 
       var sheetAngle = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(boat.mainSheetPos);
       var indicatorLength = 60;
@@ -684,7 +870,7 @@ function (_React$Component) {
           id: key,
           onClick: that.toggleArrow
         }, key), that.arrows[key] ? 'true' : 'false');
-      }), "heading: ", this.props.model.boat.heading, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "angle: ", this.props.model.boat.centerBoard.angle, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("canvas", {
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("canvas", {
         ref: "canvas",
         width: "300px",
         height: "300px"
@@ -725,8 +911,8 @@ function () {
   function Boat() {
     _classCallCheck(this, Boat);
 
-    this.sail = new _foil__WEBPACK_IMPORTED_MODULE_1__["default"](0.06, 0.03, 10);
-    this.centerBoard = new _foil__WEBPACK_IMPORTED_MODULE_1__["default"](0.8, 0.3, 1);
+    this.sail = new _foil__WEBPACK_IMPORTED_MODULE_1__["default"](0.1, 0.03, 10);
+    this.centerBoard = new _foil__WEBPACK_IMPORTED_MODULE_1__["default"](1, 1.5, 1);
     this.rudderAngle = 0;
     this.position = [400, 100];
     this.sailAngle = 0;
@@ -737,7 +923,7 @@ function () {
     this.heading = 0;
     this.speed = 0;
     this.velocity = [0, 0];
-    this.mass = 2;
+    this.mass = 4;
     this.maxSpeed = 40; //      pixels/second
 
     this.mainSheetPos = 20; //      max |angle| of sail
@@ -893,7 +1079,7 @@ function () {
     key: "calculateLiftOnSail",
     value: function calculateLiftOnSail() {
       var absSailAngle = this.heading - this.sailAngle;
-      return this.sail.calculateLift(absSailAngle, this.appWindVel, this.tack === 'port');
+      return this.sail.calculateLift(absSailAngle, this.appWindVel, this.tack === 'starboard');
     }
   }, {
     key: "calculateDragOnCenterBoard",

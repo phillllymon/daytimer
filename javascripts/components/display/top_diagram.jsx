@@ -8,7 +8,8 @@ import {
 import {
     makeInArrow,
     makeOutArrow,
-    makeStreamRipple
+    makeStreamRipple,
+    drawForceArrows
 } from './canvas_helper';
 
 class TopDiagram extends React.Component {
@@ -20,7 +21,7 @@ class TopDiagram extends React.Component {
         this.arrows = {
             appWind: true,
             sailLift: false,
-            sailDrag: false,
+            dragOnSail: false,
             sailForce: false,
             boardLift: false,
             boardDrag: true,
@@ -80,77 +81,8 @@ class TopDiagram extends React.Component {
         ctx.beginPath();
         ctx.arc(150, 115, 3, 0, 2 * Math.PI, true);
         ctx.fill();
-
-        //apparentWindArrow
-        let appDir = boat.appWindDir;
-        let appSpeed = boat.appWindSpeed;
-        let appHeading = getHeading(appDir);
-        let relAppHeading = toRadians(toDegrees(appHeading) - boat.heading);
-        if (this.arrows.appWind) {
-            makeInArrow(ctx, 150, 150, relAppHeading, 100, appSpeed, 6, 'lightblue');
-        }
         
-
-        //windDragArrow
-        let dragAmt = vectorMag(model.dragOnSail);
-        let relDragHeading = relAppHeading; //should be same as apparent wind
-        if (this.arrows.sailDrag) {
-            makeOutArrow(ctx, 150, 150, relDragHeading, 50, dragAmt, 6, 'red');
-        }
-
-        //windLiftArrow
-        let liftVec = model.liftOnSail;
-        let liftAmt = vectorMag(liftVec);
-        let liftHeading = getHeading(liftVec);
-        let relLiftHeading = toRadians(toDegrees(liftHeading) - boat.heading);
-        if (this.arrows.sailLift) {
-            makeOutArrow(ctx, 150, 150, relLiftHeading, 50, liftAmt, 6, 'green');
-        }
-
-        //windForceArrow
-        let forceVec = model.forceOnSail;
-        let forceAmt = vectorMag(forceVec);
-        let forceHeading = getHeading(forceVec);
-        let relForceHeading = toRadians(toDegrees(forceHeading) - boat.heading);
-        if (this.arrows.sailForce) {
-            makeOutArrow(ctx, 150, 150, relForceHeading, 50, forceAmt, 6, 'green');
-        }
-
-        //boardDragArrow
-        let boardDragVec = model.dragOnBoard;
-        let boardDragAmt = vectorMag(boardDragVec);
-        let boardDragHeading = getHeading(boardDragVec);
-        let relBoardDragHeading = toRadians(toDegrees(boardDragHeading) - boat.heading);
-        if (this.arrows.boardDrag) {
-            makeOutArrow(ctx, 150, 150, relBoardDragHeading, 70, boardDragAmt, 6, 'red');
-        }
-
-        //boardLiftArrow
-        let boardLiftVec = model.liftOnBoard;
-        let boardLiftAmt = vectorMag(boardLiftVec);
-        let boardLiftHeading = getHeading(boardLiftVec);
-        let relBoardLiftHeading = toRadians(toDegrees(boardLiftHeading) - boat.heading);
-        if (this.arrows.boardLift) {
-            makeOutArrow(ctx, 150, 150, relBoardLiftHeading, 50, boardLiftAmt, 6, 'green');
-        }
-
-        //boardForceArrow
-        let boardForceVec = model.forceOnBoard;
-        let boardForceAmt = vectorMag(boardForceVec);
-        let boardForceHeading = getHeading(boardForceVec);
-        let relBoardForceHeading = toRadians(toDegrees(boardForceHeading) - boat.heading);
-        if (this.arrows.boardForce) {
-            makeOutArrow(ctx, 150, 150, relBoardForceHeading, 50, boardForceAmt, 6, 'red');
-        }
-
-        //totalForceArrow
-        let totalForceVec = model.totalForce;
-        let totalForceAmt = vectorMag(totalForceVec);
-        let totalForceHeading = getHeading(totalForceVec);
-        let reltotalForceHeading = toRadians(toDegrees(totalForceHeading) - boat.heading);
-        if (this.arrows.totalForce) {
-            makeOutArrow(ctx, 150, 150, reltotalForceHeading, 50, totalForceAmt, 6, 'black');
-        }
+        drawForceArrows(ctx, 150, 150, this.arrows, model, boat);
 
         //sheetAngleIndicator
         let sheetAngle = toRadians(boat.mainSheetPos);
@@ -232,9 +164,6 @@ class TopDiagram extends React.Component {
                         );
                     })
                 }
-                heading: {this.props.model.boat.heading}
-                <br/>
-                angle: {this.props.model.boat.centerBoard.angle}
                 <canvas ref="canvas"
                     width="300px"
                     height="300px"

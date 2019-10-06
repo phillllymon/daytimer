@@ -9,8 +9,8 @@ import Foil from './foil';
 
 class Boat {
     constructor(){
-        this.sail = new Foil(0.06, 0.03, 10);
-        this.centerBoard = new Foil(0.8, 0.3, 1);
+        this.sail = new Foil(0.1, 0.03, 10);
+        this.centerBoard = new Foil(1, 1.5, 1);
         this.rudderAngle = 0;
         this.position = [400, 100];
         this.sailAngle = 0;
@@ -19,7 +19,7 @@ class Boat {
         this.heading = 0;
         this.speed = 0;
         this.velocity = [0, 0];
-        this.mass = 2;
+        this.mass = 4;
         this.maxSpeed = 40;        //      pixels/second
         this.mainSheetPos = 20; //      max |angle| of sail
         this.trimmingSpeed = 30 //      deg/second
@@ -169,7 +169,7 @@ class Boat {
 
     calculateLiftOnSail() {
         let absSailAngle = this.heading - this.sailAngle;
-        return this.sail.calculateLift(absSailAngle, this.appWindVel, (this.tack === 'port'));
+        return this.sail.calculateLift(absSailAngle, this.appWindVel, (this.tack === 'starboard'));
     }
 
     calculateDragOnCenterBoard() {
