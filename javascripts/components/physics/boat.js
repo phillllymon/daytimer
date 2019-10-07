@@ -9,17 +9,18 @@ import Foil from './foil';
 
 class Boat {
     constructor(){
-        this.sail = new Foil(0.1, 0.03, 10);
-        this.centerBoard = new Foil(1, 1.5, 1);
+        this.sail = new Foil(0.6, 0.4, 0.01);      //0.6, 0.4, 0.01
+        this.centerBoard = new Foil(3, 0.5, 0); //3, 0.5, 0
+        this.hull = new Foil(0, 0, 1);          //0, 0, 1
+        this.mass = 5;
         this.rudderAngle = 0;
-        this.position = [400, 100];
+        this.position = [600, 400];
         this.sailAngle = 0;
         this.rudderSpeed = 100; //      deg/second
         this.turningSpeed = 2;  //      deg/second/rudder/degree
         this.heading = 0;
         this.speed = 0;
         this.velocity = [0, 0];
-        this.mass = 4;
         this.maxSpeed = 40;        //      pixels/second
         this.mainSheetPos = 20; //      max |angle| of sail
         this.trimmingSpeed = 30 //      deg/second
@@ -63,8 +64,11 @@ class Boat {
     calculateTotalForceOnBoat() {
         let sailForce = this.calculateForceOnSail();
         let boardForce = this.calculateForceOnCenterBoard();
-        return [sailForce[0] + boardForce[0], sailForce[1] + boardForce[1]];
-        //return vectorSum(sailForce, boardForce);
+        let hullForce = this.calculateDragOnHull();
+        return [
+            sailForce[0] + boardForce[0] + hullForce[0], 
+            sailForce[1] + boardForce[1] + hullForce[1]
+        ];
     }
 
     updateVelocity(dt) {
@@ -78,44 +82,6 @@ class Boat {
         let moveVector = [dt * this.velocity[0], dt * this.velocity[1]];
         this.position[0] += moveVector[0];
         this.position[1] += moveVector[1];
-
-        // let speed = this.calculateSpeed();
-        // let radHeading = this.heading * Math.PI / 180;
-        // let unitVector = [Math.sin(radHeading), Math.cos(radHeading)];
-        // let dist = speed * dt;
-        // let moveVector = [dist * unitVector[0], dist * unitVector[1]];
-        // this.position[0] += moveVector[0];
-        // this.position[1] -= moveVector[1];
-        // this.speed = speed;
-    }
-
-    calculateSpeed() {
-        return 10;
-        let maxSpeed = this.maxSpeed;
-        let speedAngle = this.heading < 180 ?
-        this.heading :
-        this.heading - (2*(this.heading - 180));
-        if (speedAngle < 22.5){
-            maxSpeed = 0;
-        }
-        else if (speedAngle < 45){
-            let range = [0, maxSpeed / 2]
-            maxSpeed = range[0] + range[1] * ((speedAngle - 22.5)/(22.5));
-        }
-        else if (speedAngle < 90){
-            let range = [maxSpeed / 2, maxSpeed]
-            maxSpeed = range[0] + (range[1] - range[0] ) * ((speedAngle - 45) / (45));
-        }
-        else if (speedAngle <= 180) {
-            let range = [maxSpeed, 0.25 * maxSpeed]
-            maxSpeed = range[0] - (range[1] * ((speedAngle - 90) / (90)));
-        }
-        let idealSailAngle = speedAngle / 2;
-        this.idealSailAngle = idealSailAngle;
-        this.absSailAngle = speedAngle - Math.abs(this.sailAngle);
-        let fractionOfMax = (45 - Math.abs(this.absSailAngle - idealSailAngle))/(45);
-        if (fractionOfMax < 0) fractionOfMax = 0;
-        return maxSpeed * fractionOfMax;
     }
 
     updateSailAngle(dt) {
@@ -190,6 +156,13 @@ class Boat {
         let lift = this.calculateLiftOnCenterBoard();
         let drag = this.calculateDragOnCenterBoard();
         return [lift[0] + drag[0], lift[1] + drag[1]];
+    }
+
+    calculateDragOnHull() {
+        let absHullAngle = this.heading - 180;
+        let waterVector = [-this.velocity[0], -this.velocity[1]];
+        let hullDrag = this.hull.calculateDrag(absHullAngle, waterVector);
+        return hullDrag;
     }
 
 }

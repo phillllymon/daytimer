@@ -5,7 +5,8 @@ import {
     vectorMag
 } from '../util/vector_util';
 import {
-    drawForceArrows
+    drawForceArrows,
+    makeStreamRipple
 } from './canvas_helper';
 
 class MainDisplay extends React.Component {
@@ -22,6 +23,7 @@ class MainDisplay extends React.Component {
             boardLift: false,
             boardDrag: false,
             boardForce: false,
+            hullDrag: false,
             totalForce: false,
         };
 
@@ -33,6 +35,7 @@ class MainDisplay extends React.Component {
             boardLift: 'green',
             boardDrag: 'red',
             boardForce: 'black',
+            hullDrag: 'red',
             totalForce: 'black'
         }
 
@@ -99,9 +102,17 @@ class MainDisplay extends React.Component {
             });
         });
 
-        ctx.fillStyle = 'red';
+        //orient to boat
         ctx.translate(pos[0], pos[1]);
         ctx.rotate(dir);
+
+        //streamRipples
+        makeStreamRipple(ctx, 0, -33, boat.velocity, boat.heading);
+        makeStreamRipple(ctx, 17, 29, boat.velocity, boat.heading);
+        makeStreamRipple(ctx, -17, 29, boat.velocity, boat.heading);
+
+        //draw boat
+        ctx.fillStyle = 'red';
         ctx.beginPath();
         ctx.arc(35, 10, 55, 2.8, 4.0, false);
         ctx.arc(-35, 10, 55, 4.0 + (3.14 - (2 * (4.0 - 3.14))), 3.14 - 2.8, false);
@@ -148,18 +159,20 @@ class MainDisplay extends React.Component {
     }
 
     mainControls() {
-        let that = this;
         return (
             <div style={{'display' : 'flex'}}>
-                <button onClick={this.centerBoat}>re-center boat</button>
+                <button 
+                    style={{'position' : 'fixed', 'top' : '30', 'left' : '310'}}
+                    onClick={this.centerBoat}>re-center boat
+                </button>
                 {
                     Object.keys(this.arrows).map((key, idx) => {
                         return (
                         <div key={idx}>
                             <ArrowButton 
                                 arrow={key}
-                                active={that.arrows[key]} 
-                                color={that.arrowColors[key]}
+                                active={this.arrows[key]} 
+                                color={this.arrowColors[key]}
                                 setArrowColor={this.setArrowColor}
                                 toggleArrow={this.toggleArrow}
                             />
@@ -167,7 +180,7 @@ class MainDisplay extends React.Component {
                         );
                 
                     })
-            }
+                }
             </div>
         );
     }

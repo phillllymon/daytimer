@@ -143,6 +143,7 @@ function (_React$Component) {
       boardLift: 'Lift on Centerboard',
       boardDrag: 'Drag on Centerboard',
       boardForce: 'Force on Centerboard',
+      hullDrag: 'Drag on Hull',
       totalForce: 'Total Force on Boat'
     };
     return _this;
@@ -201,8 +202,7 @@ function (_React$Component) {
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         style: {
-          'display': 'flex',
-          'justifyContent': 'center'
+          'display': 'flex'
         }
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         style: {
@@ -216,7 +216,7 @@ function (_React$Component) {
       }), this.colorMenu(), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "arrowButton",
         style: this.props.active ? {
-          'background-color': this.props.color
+          'backgroundColor': this.props.color
         } : {},
         id: this.props.arrow,
         onClick: this.props.toggleArrow
@@ -360,6 +360,16 @@ var drawForceArrows = function drawForceArrows(ctx, x, y, arrows, model, boat) {
 
   if (arrows.boardForce) {
     makeOutArrow(ctx, x, y, relBoardForceHeading, 50, boardForceAmt, 6, arrowColors.boardForce ? arrowColors.boardForce : 'lightblue');
+  } //hullDragArrow
+
+
+  var hullDragVec = model.dragOnHull;
+  var hullDragAmt = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["vectorMag"])(hullDragVec);
+  var hullDragHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getHeading"])(hullDragVec);
+  var relHullDragHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toDegrees"])(hullDragHeading) - boat.heading);
+
+  if (arrows.hullDrag) {
+    makeOutArrow(ctx, x, y, relHullDragHeading, 70, hullDragAmt, 6, arrowColors.hullDrag ? arrowColors.boardDrag : 'lightblue');
   } //totalForceArrow
 
 
@@ -433,6 +443,7 @@ function (_React$Component) {
       boardLift: false,
       boardDrag: false,
       boardForce: false,
+      hullDrag: false,
       totalForce: false
     };
     _this.arrowColors = {
@@ -443,6 +454,7 @@ function (_React$Component) {
       boardLift: 'green',
       boardDrag: 'red',
       boardForce: 'black',
+      hullDrag: 'red',
       totalForce: 'black'
     };
     _this.centerBoat = _this.centerBoat.bind(_assertThisInitialized(_this));
@@ -514,10 +526,16 @@ function (_React$Component) {
           ctx.lineTo(wave.pos[0] - (1 * widthFactor + 2), wave.pos[1]);
           ctx.stroke();
         });
-      });
-      ctx.fillStyle = 'red';
+      }); //orient to boat
+
       ctx.translate(pos[0], pos[1]);
-      ctx.rotate(dir);
+      ctx.rotate(dir); //streamRipples
+
+      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_3__["makeStreamRipple"])(ctx, 0, -33, boat.velocity, boat.heading);
+      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_3__["makeStreamRipple"])(ctx, 17, 29, boat.velocity, boat.heading);
+      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_3__["makeStreamRipple"])(ctx, -17, 29, boat.velocity, boat.heading); //draw boat
+
+      ctx.fillStyle = 'red';
       ctx.beginPath();
       ctx.arc(35, 10, 55, 2.8, 4.0, false);
       ctx.arc(-35, 10, 55, 4.0 + (3.14 - 2 * (4.0 - 3.14)), 3.14 - 2.8, false); //ctx.arc(-35, 10, 55, 9.42 - 4, false);   //slow brain not seeing why this is not equivalent...
@@ -557,20 +575,24 @@ function (_React$Component) {
     value: function mainControls() {
       var _this2 = this;
 
-      var that = this;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         style: {
           'display': 'flex'
         }
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        style: {
+          'position': 'fixed',
+          'top': '30',
+          'left': '310'
+        },
         onClick: this.centerBoat
       }, "re-center boat"), Object.keys(this.arrows).map(function (key, idx) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           key: idx
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_arrow_button__WEBPACK_IMPORTED_MODULE_1__["default"], {
           arrow: key,
-          active: that.arrows[key],
-          color: that.arrowColors[key],
+          active: _this2.arrows[key],
+          color: _this2.arrowColors[key],
           setArrowColor: _this2.setArrowColor,
           toggleArrow: _this2.toggleArrow
         }));
@@ -711,8 +733,9 @@ function (_React$Component) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _util_vector_util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../util/vector_util */ "./javascripts/components/util/vector_util.js");
-/* harmony import */ var _canvas_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./canvas_helper */ "./javascripts/components/display/canvas_helper.js");
+/* harmony import */ var _arrow_button__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./arrow_button */ "./javascripts/components/display/arrow_button.jsx");
+/* harmony import */ var _util_vector_util__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../util/vector_util */ "./javascripts/components/util/vector_util.js");
+/* harmony import */ var _canvas_helper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./canvas_helper */ "./javascripts/components/display/canvas_helper.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -735,6 +758,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
 var TopDiagram =
 /*#__PURE__*/
 function (_React$Component) {
@@ -752,13 +776,26 @@ function (_React$Component) {
       appWind: true,
       sailLift: false,
       dragOnSail: false,
-      sailForce: false,
+      sailForce: true,
       boardLift: false,
-      boardDrag: true,
-      boardForce: false,
+      boardDrag: false,
+      boardForce: true,
+      hullDrag: false,
       totalForce: false
     };
+    _this.arrowColors = {
+      appWind: 'lightblue',
+      sailLift: 'green',
+      dragOnSail: 'red',
+      sailForce: 'black',
+      boardLift: 'green',
+      boardDrag: 'red',
+      boardForce: 'black',
+      hullDrag: 'red',
+      totalForce: 'black'
+    };
     _this.toggleArrow = _this.toggleArrow.bind(_assertThisInitialized(_this));
+    _this.setArrowColor = _this.setArrowColor.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -767,6 +804,11 @@ function (_React$Component) {
     value: function toggleArrow(e) {
       var val = this.arrows[e.target.id];
       this.arrows[e.target.id] = val ? false : true;
+    }
+  }, {
+    key: "setArrowColor",
+    value: function setArrowColor(arrow, color) {
+      this.arrowColors[arrow] = color;
     }
   }, {
     key: "componentDidMount",
@@ -798,9 +840,9 @@ function (_React$Component) {
       var boat = model.boat;
       var ctx = this.ctx; //streamRipples
 
-      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeStreamRipple"])(ctx, 150, 80, boat.velocity, boat.heading);
-      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeStreamRipple"])(ctx, 183, 210, boat.velocity, boat.heading);
-      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeStreamRipple"])(ctx, 117, 210, boat.velocity, boat.heading); //boat
+      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_3__["makeStreamRipple"])(ctx, 150, 80, boat.velocity, boat.heading);
+      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_3__["makeStreamRipple"])(ctx, 183, 210, boat.velocity, boat.heading);
+      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_3__["makeStreamRipple"])(ctx, 117, 210, boat.velocity, boat.heading); //boat
 
       ctx.beginPath();
       ctx.fillStyle = 'brown';
@@ -815,9 +857,9 @@ function (_React$Component) {
       ctx.beginPath();
       ctx.arc(150, 115, 3, 0, 2 * Math.PI, true);
       ctx.fill();
-      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["drawForceArrows"])(ctx, 150, 150, this.arrows, model, boat); //sheetAngleIndicator
+      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_3__["drawForceArrows"])(ctx, 150, 150, this.arrows, model, boat, this.arrowColors); //sheetAngleIndicator
 
-      var sheetAngle = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(boat.mainSheetPos);
+      var sheetAngle = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_2__["toRadians"])(boat.mainSheetPos);
       var indicatorLength = 60;
       ctx.lineWidth = 1;
       ctx.strokeStyle = 'white';
@@ -828,7 +870,7 @@ function (_React$Component) {
       ctx.lineTo(150 - indicatorLength * Math.sin(sheetAngle), 111 + indicatorLength * Math.cos(sheetAngle));
       ctx.stroke(); //boom
 
-      var boomAngle = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(boat.sailAngle);
+      var boomAngle = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_2__["toRadians"])(boat.sailAngle);
       var boomLength = 80;
       ctx.lineWidth = 3;
       ctx.strokeStyle = 'black';
@@ -843,7 +885,7 @@ function (_React$Component) {
       ctx.arc(150, 150, 2, 0, 2 * Math.PI, true);
       ctx.fill(); //rudder
 
-      var angle = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(boat.rudderAngle);
+      var angle = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_2__["toRadians"])(boat.rudderAngle);
       var rudderLength = 20;
       ctx.beginPath();
       ctx.arc(150, 210, 2, 0, 2 * Math.PI, true);
@@ -862,19 +904,33 @@ function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      var that = this;
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, Object.keys(this.arrows).map(function (key, idx) {
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          key: idx
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-          id: key,
-          onClick: that.toggleArrow
-        }, key), that.arrows[key] ? 'true' : 'false');
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("canvas", {
+      var _this2 = this;
+
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        style: {
+          'width': '300px'
+        }
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("canvas", {
         ref: "canvas",
         width: "300px",
         height: "300px"
-      }));
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        style: {
+          'display': 'flex',
+          'flexDirection': 'row',
+          'flexWrap': 'wrap'
+        }
+      }, Object.keys(this.arrows).map(function (key, idx) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          key: idx
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_arrow_button__WEBPACK_IMPORTED_MODULE_1__["default"], {
+          arrow: key,
+          active: _this2.arrows[key],
+          color: _this2.arrowColors[key],
+          setArrowColor: _this2.setArrowColor,
+          toggleArrow: _this2.toggleArrow
+        }));
+      })));
     }
   }]);
 
@@ -911,10 +967,15 @@ function () {
   function Boat() {
     _classCallCheck(this, Boat);
 
-    this.sail = new _foil__WEBPACK_IMPORTED_MODULE_1__["default"](0.1, 0.03, 10);
-    this.centerBoard = new _foil__WEBPACK_IMPORTED_MODULE_1__["default"](1, 1.5, 1);
+    this.sail = new _foil__WEBPACK_IMPORTED_MODULE_1__["default"](0.6, 0.4, 0.01); //0.6, 0.4, 0.01
+
+    this.centerBoard = new _foil__WEBPACK_IMPORTED_MODULE_1__["default"](3, 0.5, 0); //3, 0.5, 0
+
+    this.hull = new _foil__WEBPACK_IMPORTED_MODULE_1__["default"](0, 0, 1); //0, 0, 1
+
+    this.mass = 5;
     this.rudderAngle = 0;
-    this.position = [400, 100];
+    this.position = [600, 400];
     this.sailAngle = 0;
     this.rudderSpeed = 100; //      deg/second
 
@@ -923,7 +984,6 @@ function () {
     this.heading = 0;
     this.speed = 0;
     this.velocity = [0, 0];
-    this.mass = 4;
     this.maxSpeed = 40; //      pixels/second
 
     this.mainSheetPos = 20; //      max |angle| of sail
@@ -978,7 +1038,8 @@ function () {
     value: function calculateTotalForceOnBoat() {
       var sailForce = this.calculateForceOnSail();
       var boardForce = this.calculateForceOnCenterBoard();
-      return [sailForce[0] + boardForce[0], sailForce[1] + boardForce[1]]; //return vectorSum(sailForce, boardForce);
+      var hullForce = this.calculateDragOnHull();
+      return [sailForce[0] + boardForce[0] + hullForce[0], sailForce[1] + boardForce[1] + hullForce[1]];
     }
   }, {
     key: "updateVelocity",
@@ -993,41 +1054,7 @@ function () {
     value: function updatePosition(dt) {
       var moveVector = [dt * this.velocity[0], dt * this.velocity[1]];
       this.position[0] += moveVector[0];
-      this.position[1] += moveVector[1]; // let speed = this.calculateSpeed();
-      // let radHeading = this.heading * Math.PI / 180;
-      // let unitVector = [Math.sin(radHeading), Math.cos(radHeading)];
-      // let dist = speed * dt;
-      // let moveVector = [dist * unitVector[0], dist * unitVector[1]];
-      // this.position[0] += moveVector[0];
-      // this.position[1] -= moveVector[1];
-      // this.speed = speed;
-    }
-  }, {
-    key: "calculateSpeed",
-    value: function calculateSpeed() {
-      return 10;
-      var maxSpeed = this.maxSpeed;
-      var speedAngle = this.heading < 180 ? this.heading : this.heading - 2 * (this.heading - 180);
-
-      if (speedAngle < 22.5) {
-        maxSpeed = 0;
-      } else if (speedAngle < 45) {
-        var range = [0, maxSpeed / 2];
-        maxSpeed = range[0] + range[1] * ((speedAngle - 22.5) / 22.5);
-      } else if (speedAngle < 90) {
-        var _range = [maxSpeed / 2, maxSpeed];
-        maxSpeed = _range[0] + (_range[1] - _range[0]) * ((speedAngle - 45) / 45);
-      } else if (speedAngle <= 180) {
-        var _range2 = [maxSpeed, 0.25 * maxSpeed];
-        maxSpeed = _range2[0] - _range2[1] * ((speedAngle - 90) / 90);
-      }
-
-      var idealSailAngle = speedAngle / 2;
-      this.idealSailAngle = idealSailAngle;
-      this.absSailAngle = speedAngle - Math.abs(this.sailAngle);
-      var fractionOfMax = (45 - Math.abs(this.absSailAngle - idealSailAngle)) / 45;
-      if (fractionOfMax < 0) fractionOfMax = 0;
-      return maxSpeed * fractionOfMax;
+      this.position[1] += moveVector[1];
     }
   }, {
     key: "updateSailAngle",
@@ -1104,6 +1131,14 @@ function () {
       var drag = this.calculateDragOnCenterBoard();
       return [lift[0] + drag[0], lift[1] + drag[1]];
     }
+  }, {
+    key: "calculateDragOnHull",
+    value: function calculateDragOnHull() {
+      var absHullAngle = this.heading - 180;
+      var waterVector = [-this.velocity[0], -this.velocity[1]];
+      var hullDrag = this.hull.calculateDrag(absHullAngle, waterVector);
+      return hullDrag;
+    }
   }]);
 
   return Boat;
@@ -1135,7 +1170,7 @@ var Foil =
 /*#__PURE__*/
 function () {
   function Foil(cLift, cDrag) {
-    var minDrag = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 10;
+    var minDrag = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
 
     _classCallCheck(this, Foil);
 
@@ -1156,7 +1191,7 @@ function () {
 
       var angleOfAttack = Math.abs(foilAngle - fluidHeading);
       var radAttack = -(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(angleOfAttack) - Math.PI);
-      var dragMag = Math.abs(this.minDrag + this.cDrag * (fluidSpeed * fluidSpeed) * Math.sin(radAttack));
+      var dragMag = this.minDrag * fluidSpeed + Math.abs(this.cDrag * (fluidSpeed * fluidSpeed) * Math.sin(radAttack));
       return [dragMag * fluidDir[0], dragMag * fluidDir[1]];
     }
   }, {
@@ -1214,6 +1249,7 @@ function () {
     this.dragOnBoard = [0, 0];
     this.liftOnBoard = [0, 0];
     this.forceOnBoard = [0, 0];
+    this.dragOnHull = [0, 0];
     this.totalForce = [0, 0];
   }
 
@@ -1244,6 +1280,7 @@ function () {
       this.dragOnBoard = this.boat.calculateDragOnCenterBoard();
       this.liftOnBoard = this.boat.calculateLiftOnCenterBoard();
       this.forceOnBoard = this.boat.calculateForceOnCenterBoard();
+      this.dragOnHull = this.boat.calculateDragOnHull();
       this.totalForce = this.boat.calculateTotalForceOnBoat();
       this.boat.updateVelocity(dt);
       this.boat.updatePosition(dt);

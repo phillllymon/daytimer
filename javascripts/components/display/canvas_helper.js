@@ -153,6 +153,15 @@ export const drawForceArrows = (ctx, x, y, arrows, model, boat, arrowColors = {}
         makeOutArrow(ctx, x, y, relBoardForceHeading, 50, boardForceAmt, 6, (arrowColors.boardForce ? arrowColors.boardForce : 'lightblue'));
     }
 
+    //hullDragArrow
+    let hullDragVec = model.dragOnHull;
+    let hullDragAmt = vectorMag(hullDragVec);
+    let hullDragHeading = getHeading(hullDragVec);
+    let relHullDragHeading = toRadians(toDegrees(hullDragHeading) - boat.heading);
+    if (arrows.hullDrag) {
+        makeOutArrow(ctx, x, y, relHullDragHeading, 70, hullDragAmt, 6, (arrowColors.hullDrag ? arrowColors.boardDrag : 'lightblue'));
+    }
+
     //totalForceArrow
     let totalForceVec = model.totalForce;
     let totalForceAmt = vectorMag(totalForceVec);

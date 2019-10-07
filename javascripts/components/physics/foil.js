@@ -7,7 +7,7 @@ import {
 } from '../util/vector_util';
 
 class Foil {
-    constructor(cLift, cDrag, minDrag = 10) {
+    constructor(cLift, cDrag, minDrag = 1) {
         this.cLift = cLift;
         this.cDrag = cDrag;
         this.minDrag = minDrag;
@@ -25,7 +25,8 @@ class Foil {
         //let angleOfAttack = foilAngle - fluidHeading;
         let angleOfAttack = Math.abs(foilAngle - fluidHeading);
         let radAttack = -(toRadians(angleOfAttack) - Math.PI);
-        let dragMag = Math.abs(this.minDrag + this.cDrag * (fluidSpeed * fluidSpeed) * Math.sin(radAttack));
+        let dragMag = (this.minDrag * fluidSpeed) + 
+            Math.abs(this.cDrag * (fluidSpeed * fluidSpeed) * Math.sin(radAttack));
         return [dragMag * fluidDir[0], dragMag * fluidDir[1]];
     }
 

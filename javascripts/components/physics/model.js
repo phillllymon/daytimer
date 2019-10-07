@@ -8,6 +8,7 @@ class Model {
         this.dragOnBoard = [0, 0];
         this.liftOnBoard = [0, 0];
         this.forceOnBoard = [0, 0];
+        this.dragOnHull = [0, 0];
         this.totalForce = [0, 0];
     }
 
@@ -36,6 +37,8 @@ class Model {
         this.dragOnBoard = this.boat.calculateDragOnCenterBoard();
         this.liftOnBoard = this.boat.calculateLiftOnCenterBoard();
         this.forceOnBoard = this.boat.calculateForceOnCenterBoard();
+
+        this.dragOnHull = this.boat.calculateDragOnHull();
         
         this.totalForce = this.boat.calculateTotalForceOnBoat();
         

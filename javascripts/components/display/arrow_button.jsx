@@ -28,6 +28,7 @@ class ArrowButton extends React.Component {
             boardLift: 'Lift on Centerboard',
             boardDrag: 'Drag on Centerboard',
             boardForce: 'Force on Centerboard',
+            hullDrag: 'Drag on Hull',
             totalForce: 'Total Force on Boat'
         }
     }
@@ -80,7 +81,7 @@ class ArrowButton extends React.Component {
 
     render() {
         return (
-            <div style={{'display' : 'flex', 'justifyContent' : 'center'}}>
+            <div style={{'display' : 'flex'}}>
                 <div 
                     style={{
                     'height': '20px',
@@ -94,7 +95,7 @@ class ArrowButton extends React.Component {
                 {this.colorMenu()}
                 <div
                     className="arrowButton"
-                    style={this.props.active ? {'background-color' : this.props.color} : {}}
+                    style={this.props.active ? {'backgroundColor' : this.props.color} : {}}
                     id={this.props.arrow}
                     onClick={this.props.toggleArrow}
                 >{this.forceLabels[this.props.arrow]}</div>

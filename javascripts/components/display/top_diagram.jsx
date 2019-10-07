@@ -1,4 +1,5 @@
 import React from 'react';
+import ArrowButton from './arrow_button';
 import {
     toRadians,
     toDegrees,
@@ -22,19 +23,37 @@ class TopDiagram extends React.Component {
             appWind: true,
             sailLift: false,
             dragOnSail: false,
-            sailForce: false,
+            sailForce: true,
             boardLift: false,
-            boardDrag: true,
-            boardForce: false,
+            boardDrag: false,
+            boardForce: true,
+            hullDrag: false,
             totalForce: false
         };
 
+        this.arrowColors = {
+            appWind: 'lightblue',
+            sailLift: 'green',
+            dragOnSail: 'red',
+            sailForce: 'black',
+            boardLift: 'green',
+            boardDrag: 'red',
+            boardForce: 'black',
+            hullDrag: 'red',
+            totalForce: 'black'
+        }
+
         this.toggleArrow = this.toggleArrow.bind(this);
+        this.setArrowColor = this.setArrowColor.bind(this);
     }
 
     toggleArrow(e) {
         let val = this.arrows[e.target.id];
         this.arrows[e.target.id] = val ? false : true;
+    }
+
+    setArrowColor(arrow, color) {
+        this.arrowColors[arrow] = color;
     }
 
     componentDidMount() {
@@ -82,7 +101,7 @@ class TopDiagram extends React.Component {
         ctx.arc(150, 115, 3, 0, 2 * Math.PI, true);
         ctx.fill();
         
-        drawForceArrows(ctx, 150, 150, this.arrows, model, boat);
+        drawForceArrows(ctx, 150, 150, this.arrows, model, boat, this.arrowColors);
 
         //sheetAngleIndicator
         let sheetAngle = toRadians(boat.mainSheetPos);
@@ -149,25 +168,30 @@ class TopDiagram extends React.Component {
     }
 
     render (){
-        let that = this;
         return (
-            <div>
-                {
-                    Object.keys(this.arrows).map( (key, idx) => {
-                        return (
-                            <div key={idx}>   
-                                <button id={key} onClick={that.toggleArrow}>
-                                    {key} 
-                                </button>
-                                    {that.arrows[key] ? 'true' : 'false'}
-                            </div>
-                        );
-                    })
-                }
+            <div style={{'width' : '300px'}}>
                 <canvas ref="canvas"
                     width="300px"
                     height="300px"
                 />
+                <div style={{ 'display': 'flex', 'flexDirection': 'row', 'flexWrap': 'wrap'}}>
+                {
+                    Object.keys(this.arrows).map((key, idx) => {
+                        return (
+                            <div key={idx}>
+                                <ArrowButton
+                                    arrow={key}
+                                    active={this.arrows[key]}
+                                    color={this.arrowColors[key]}
+                                    setArrowColor={this.setArrowColor}
+                                    toggleArrow={this.toggleArrow}
+                                />
+                            </div>
+                        );
+
+                    })
+                }
+                </div>
             </div>
         );
     }
