@@ -564,11 +564,7 @@ function (_React$Component) {
       ctx.arc(40, 40, 2, 0, 2 * Math.PI, true);
       ctx.moveTo(40, 40);
       ctx.lineTo(40 + trueVec[0], 40 + trueVec[1]);
-      ctx.stroke(); //vertical line
-      // ctx.beginPath();
-      // ctx.moveTo(400, 0);
-      // ctx.lineTo(400, 600);
-      // ctx.stroke();
+      ctx.stroke();
     }
   }, {
     key: "mainControls",
@@ -687,9 +683,9 @@ function (_React$Component) {
     key: "clearDisplay",
     value: function clearDisplay() {
       this.ctx.fillStyle = 'lightblue';
-      this.ctx.fillRect(0, 0, 300, 210);
+      this.ctx.fillRect(0, 0, 300, 310);
       this.ctx.fillStyle = 'blue';
-      this.ctx.fillRect(0, 210, 300, 300);
+      this.ctx.fillRect(0, 310, 300, 300);
     }
   }, {
     key: "drawDiagram",
@@ -703,6 +699,46 @@ function (_React$Component) {
       var model = this.props.model;
       var boat = model.boat;
       var ctx = this.ctx;
+      ctx.translate(150, 300); //heeling forces
+
+      var sailHealForce = model.sailHeelingForce;
+      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, -30, -200, -Math.PI / 2, 60, sailHealForce, 8, 'red'); //hull
+
+      ctx.beginPath();
+      ctx.fillStyle = 'brown';
+      ctx.arc(-20, -20, 40, Math.PI / 2, Math.PI, false);
+      ctx.lineTo(20, -20);
+      ctx.arc(20, -20, 40, 0, Math.PI / 2);
+      ctx.fill(); //centerboard
+
+      ctx.beginPath();
+      ctx.fillStyle = 'black';
+      ctx.moveTo(-2, 20);
+      ctx.fillRect(-2, 20, 4, 60);
+      ctx.fill(); //mast
+
+      ctx.beginPath();
+      ctx.moveTo(-2, -290);
+      ctx.fillRect(-2, -290, 4, 270);
+      ctx.fill();
+      var boomDist = Math.sin(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(boat.sailAngle)) * 140; //sail
+
+      ctx.strokeStyle = 'white';
+      ctx.fillStyle = 'white';
+      ctx.beginPath();
+      ctx.moveTo(0, -290);
+      ctx.lineTo(boomDist, -50);
+      ctx.lineTo(0, -50);
+      ctx.fill(); //boom
+
+      ctx.beginPath();
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = 'black';
+      ctx.moveTo(0, -50);
+      ctx.lineTo(boomDist, -50);
+      ctx.stroke(); //translate back
+
+      ctx.translate(-150, -300);
     }
   }, {
     key: "render",
@@ -710,7 +746,7 @@ function (_React$Component) {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("canvas", {
         ref: "canvas",
         width: "300px",
-        height: "300px"
+        height: "400px"
       }));
     }
   }]);
@@ -1139,6 +1175,12 @@ function () {
       var hullDrag = this.hull.calculateDrag(absHullAngle, waterVector);
       return hullDrag;
     }
+  }, {
+    key: "calculateSailHeelingForce",
+    value: function calculateSailHeelingForce() {
+      var sailForce = this.calculateForceOnSail();
+      return 20;
+    }
   }]);
 
   return Boat;
@@ -1251,6 +1293,8 @@ function () {
     this.forceOnBoard = [0, 0];
     this.dragOnHull = [0, 0];
     this.totalForce = [0, 0];
+    this.sailHeelingForce = 0;
+    this.boardHeelingForce = 0;
   }
 
   _createClass(Model, [{
@@ -1281,6 +1325,7 @@ function () {
       this.liftOnBoard = this.boat.calculateLiftOnCenterBoard();
       this.forceOnBoard = this.boat.calculateForceOnCenterBoard();
       this.dragOnHull = this.boat.calculateDragOnHull();
+      this.sailHeelingForce = this.boat.calculateSailHeelingForce();
       this.totalForce = this.boat.calculateTotalForceOnBoat();
       this.boat.updateVelocity(dt);
       this.boat.updatePosition(dt);

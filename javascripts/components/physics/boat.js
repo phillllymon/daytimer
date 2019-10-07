@@ -165,6 +165,11 @@ class Boat {
         return hullDrag;
     }
 
+    calculateSailHeelingForce() {
+        let sailForce = this.calculateForceOnSail();
+        return 20;
+    }
+
 }
 
 export default Boat;

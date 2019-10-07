@@ -151,11 +151,6 @@ class MainDisplay extends React.Component {
         ctx.lineTo(40 + trueVec[0], 40 + trueVec[1]);
         ctx.stroke();
 
-        //vertical line
-        // ctx.beginPath();
-        // ctx.moveTo(400, 0);
-        // ctx.lineTo(400, 600);
-        // ctx.stroke();
     }
 
     mainControls() {

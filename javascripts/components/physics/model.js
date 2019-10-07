@@ -10,6 +10,9 @@ class Model {
         this.forceOnBoard = [0, 0];
         this.dragOnHull = [0, 0];
         this.totalForce = [0, 0];
+
+        this.sailHeelingForce = 0;
+        this.boardHeelingForce = 0;
     }
 
     update(inputs, dt) {
@@ -39,6 +42,8 @@ class Model {
         this.forceOnBoard = this.boat.calculateForceOnCenterBoard();
 
         this.dragOnHull = this.boat.calculateDragOnHull();
+
+        this.sailHeelingForce = this.boat.calculateSailHeelingForce();
         
         this.totalForce = this.boat.calculateTotalForceOnBoat();
         
