@@ -13,7 +13,15 @@ class Model {
 
         this.sailHeelForce = 0;
         this.boardHeelForce = 0;
+
+        this.buoyancyForce = 0;
+
+        // setInterval(() => {
+        //     console.log('right: ' + this.rightMoment + ' heel: ' + this.heelMoment);
+        // }, 1000);
     }
+
+    
 
     update(inputs, dt) {
         
@@ -40,13 +48,22 @@ class Model {
         this.dragOnBoard = this.boat.calculateDragOnCenterBoard();
         this.liftOnBoard = this.boat.calculateLiftOnCenterBoard();
         this.forceOnBoard = this.boat.calculateForceOnCenterBoard();
-
         this.dragOnHull = this.boat.calculateDragOnHull();
+        this.totalForce = this.boat.calculateTotalForceOnBoat();
+
+        this.buoyancyForce = this.boat.sailorWeight + this.boat.boatWeight;
+        this.sailorForce = this.boat.sailorWeight;
 
         this.sailHeelForce = this.boat.calculateSailHeelForce();
         this.boardHeelForce = this.boat.calculateBoardHeelForce();
+        this.heelMoment = this.boat.calculateHeelMoment();
+        this.rightMoment = this.boat.calculateRightMoment();
+        this.boat.updateTippingVelocity(dt);
+        this.boat.updateHeelAngle(dt);
+
         
-        this.totalForce = this.boat.calculateTotalForceOnBoat();
+        
+        
         
         this.boat.updateVelocity(dt);
         this.boat.updatePosition(dt);

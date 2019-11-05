@@ -16,7 +16,7 @@ class Foil {
     }
 
     //both params absolute
-    calculateDrag(foilAngle, fluidVelocity) {
+    calculateDrag(foilAngle, fluidVelocity, tipAngle = 0) {
         this.angle = foilAngle;
 
         let fluidDir = getUnitVector(fluidVelocity);
@@ -27,23 +27,19 @@ class Foil {
         let radAttack = -(toRadians(angleOfAttack) - Math.PI);
         let dragMag = (this.minDrag * fluidSpeed) + 
             Math.abs(this.cDrag * (fluidSpeed * fluidSpeed) * Math.sin(radAttack));
+        dragMag *= Math.cos(toRadians(Math.abs(tipAngle)));
         return [dragMag * fluidDir[0], dragMag * fluidDir[1]];
     }
 
-    calculateLift(foilAngle, fluidVelocity, invert) {
+    calculateLift(foilAngle, fluidVelocity, tipAngle = 0) {
         let fluidDir = getUnitVector(fluidVelocity);
         let fluidHeading = getHeadingDeg(fluidDir);
         let fluidSpeed = vectorMag(fluidVelocity);
         let angleOfAttack = foilAngle - fluidHeading;
         let radAttack = -(toRadians(angleOfAttack) - Math.PI);
         let liftMag = this.cLift * (fluidSpeed * fluidSpeed) * Math.sin(radAttack) * Math.cos(radAttack);
+        liftMag *= Math.cos(toRadians(Math.abs(tipAngle)));
         let liftDir = [-fluidDir[1], fluidDir[0]];
-
-        //does not seem to be needed
-        // if (invert) {
-        //     liftDir = [fluidDir[1], -fluidDir[0]];
-        //     console.log('here');
-        // }
         return [liftMag * liftDir[0], liftMag * liftDir[1]];
     }
 

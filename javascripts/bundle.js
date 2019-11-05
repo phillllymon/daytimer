@@ -701,20 +701,7 @@ function (_React$Component) {
       var model = this.props.model;
       var boat = model.boat;
       var ctx = this.ctx;
-      ctx.translate(150, 300); //heeling forces
-
-      if (boat.tack === 'starboard') {
-        var sailHeelForce = model.sailHeelForce;
-        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, -30, -1 * boat.sailOffset, -Math.PI / 2, 60, sailHeelForce, 8, 'red');
-        var boardHeelForce = model.boardHeelForce;
-        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, 30, boat.boardOffset, Math.PI / 2, 60, boardHeelForce, 8, 'red');
-      } else {
-        var _sailHeelForce = model.sailHeelForce;
-        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, 30, -1 * boat.sailOffset, Math.PI / 2, 60, _sailHeelForce, 8, 'red');
-        var _boardHeelForce = model.boardHeelForce;
-        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, -30, boat.boardOffset, -Math.PI / 2, 60, _boardHeelForce, 8, 'red');
-      }
-
+      ctx.translate(150, 300);
       var heelAngle = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(boat.heelAngle);
       var floatAmt = 25 * Math.sin(Math.abs(heelAngle));
       ctx.translate(0, -1 * floatAmt);
@@ -728,7 +715,7 @@ function (_React$Component) {
       ctx.fill(); /////////ROTATION POINT!
 
       ctx.beginPath();
-      ctx.fillStyle = 'green';
+      ctx.fillStyle = 'orange';
       ctx.arc(0, 0, 10, 2 * Math.PI, 0, false);
       ctx.fill(); //centerboard
 
@@ -758,13 +745,31 @@ function (_React$Component) {
       ctx.moveTo(0, -50);
       ctx.lineTo(boomDist, -50);
       ctx.stroke(); //sailor
+      // ctx.beginPath();
+      // ctx.fillStyle = 'orange';
+      // ctx.arc(boat.sailorPosition, -40, 10, 2 * Math.PI, 0, false);
+      // ctx.fill();
 
-      ctx.beginPath();
-      ctx.fillStyle = 'orange';
-      ctx.arc(boat.sailorPosition, -40, 10, 2 * Math.PI, 0, false);
-      ctx.fill();
       ctx.rotate(-1 * heelAngle);
-      ctx.translate(0, floatAmt); //translate back
+      ctx.translate(0, floatAmt); //heeling forces
+
+      if (boat.tack === 'starboard') {
+        var sailHeelForce = model.sailHeelForce;
+        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, -30, -1 * boat.sailOffset, -Math.PI / 2, 60, sailHeelForce, 8, 'red');
+        var boardHeelForce = model.boardHeelForce;
+        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, 30, boat.boardOffset, Math.PI / 2, 60, boardHeelForce, 8, 'red');
+      } else {
+        var _sailHeelForce = model.sailHeelForce;
+        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, 30, -1 * boat.sailOffset, Math.PI / 2, 60, _sailHeelForce, 8, 'red');
+        var _boardHeelForce = model.boardHeelForce;
+        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, -30, boat.boardOffset, -Math.PI / 2, 60, _boardHeelForce, 8, 'red');
+      } //righting forces
+
+
+      var buoyancyForce = model.buoyancyForce;
+      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, -1 * boat.buoyancyOffset, -30, 0, 70, buoyancyForce, 8, 'green');
+      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, 0, 30, Math.PI, 70 + floatAmt, boat.boatWeight / 4, 8, 'black'); //eventually won't show this one, only sailor weight
+      //translate back
 
       ctx.translate(-150, -300);
     }
@@ -1031,76 +1036,106 @@ function () {
   function Boat() {
     _classCallCheck(this, Boat);
 
+    //PARTS
     this.sail = new _foil__WEBPACK_IMPORTED_MODULE_1__["default"](0.8, 0.4, 0.1); //0.8, 0.4, 0.1
 
     this.centerBoard = new _foil__WEBPACK_IMPORTED_MODULE_1__["default"](4, 1, 0); //4, 1, 0
 
     this.hull = new _foil__WEBPACK_IMPORTED_MODULE_1__["default"](0, 0, 3); //0, 0, 1
+    //PHYSICAL CONSTANTS
 
     this.mass = 5;
-    this.boatWeight = 500;
+    this.heelInertia = 500;
+    this.boatWeight = 10000;
     this.sailorWeight = 500;
-    this.sailorSpeed = 100; //      pixels/second
+    this.tipDragCoeff = 15; //SPEEDS
+
+    this.sailorSpeed = 100; //pixels/second
+
+    this.rudderSpeed = 100; //deg/second
+
+    this.turningSpeed = 2; //deg/second/rudder/degree
+
+    this.trimmingSpeed = 30; //deg/second
+
+    this.tippingVelocity = 0; //deg/second
+    //initial component positions
 
     this.sailorPosition = 0;
-    this.maxBuoyancyOffset = 70; //pixels
-
-    this.buoyancyOffset = 0;
     this.rudderAngle = 0;
-    this.position = [600, 400];
     this.sailAngle = 0;
     this.heelAngle = 0;
-    this.rudderSpeed = 100; //      deg/second
+    this.mainSheetPos = 20; //max |angle| of sail (sheet position)
 
-    this.turningSpeed = 2; //      deg/second/rudder/degree
+    this.tack = 'starboard'; //initial values
 
+    this.position = [600, 400];
     this.heading = 0;
-    this.speed = 0;
     this.velocity = [0, 0];
-    this.maxSpeed = 40; //      pixels/second
-
-    this.mainSheetPos = 20; //      max |angle| of sail
-
-    this.trimmingSpeed = 30; //      deg/second
-
-    this.maxSheetAngle = 100; //this.sailCd = .03;
-
-    this.minSailDrag = 10; //this.sailCl = .08;
-
     this.appWindDir = [0, 0];
     this.appWindSpeed = 0;
-    this.appWindVel = [0, 0];
-    this.tack = 'starboard';
+    this.appWindVel = [0, 0]; //dimensions
+
+    this.maxSailorPosition = 90; //pixels
+
+    this.maxSheetAngle = 100; //because of stays or whatever
+
+    this.maxBuoyancyOffset = 40; //pixels
+
     this.maxSailOffset = 130; //pixels
 
-    this.maxBoardOffset = 50;
+    this.maxBoardOffset = 50; //offsets
+
+    this.sailorOffset = 0;
     this.sailOffset = this.maxSailOffset;
     this.boardOffset = this.maxBoardOffset;
+    this.buoyancyOffset = 0;
   }
 
   _createClass(Boat, [{
-    key: "setHeelAngle",
-    value: function setHeelAngle(newAngle) {
-      //testing only!!!!!!
-      this.heelAngle = newAngle;
-      this.sailOffset = this.maxSailOffset * Math.cos(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(Math.abs(this.heelAngle)));
-      this.boardOffset = this.maxBoardOffset * Math.cos(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(Math.abs(this.heelAngle)));
+    key: "updateHeelAngle",
+    value: function updateHeelAngle(dt) {
+      this.heelAngle += this.tippingVelocity * dt; //also update offsets and sailor position
+
+      var angleFactor = Math.cos(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(Math.abs(this.heelAngle)));
+      var zeroAngleFactor = Math.sin(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(-1 * this.heelAngle));
+      this.sailOffset = this.maxSailOffset * angleFactor;
+      this.boardOffset = this.maxBoardOffset * angleFactor;
+      this.buoyancyOffset = this.maxBuoyancyOffset * zeroAngleFactor;
     }
   }, {
-    key: "updateHeelAngle",
-    value: function updateHeelAngle() {}
-  }, {
     key: "updateTippingVelocity",
-    value: function updateTippingVelocity() {}
+    value: function updateTippingVelocity(dt) {
+      var frictionMoment = this.tipDragCoeff * this.tippingVelocity * this.tippingVelocity;
+      if (this.tippingVelocity < 0) frictionMoment *= -1;
+      var moment = this.calculateTotalMoment() + frictionMoment;
+      var acc = moment / this.heelInertia;
+      this.tippingVelocity -= acc * dt;
+    }
   }, {
-    key: "calculateTotalMomemt",
-    value: function calculateTotalMomemt() {}
+    key: "calculateTotalMoment",
+    value: function calculateTotalMoment() {
+      var heelMoment = this.calculateHeelMoment();
+      var rightMoment = this.calculateRightMoment();
+      return heelMoment + rightMoment;
+    }
   }, {
-    key: "calculateBuoyancyMoment",
-    value: function calculateBuoyancyMoment() {}
+    key: "calculateRightMoment",
+    value: function calculateRightMoment() {
+      //CCW is positive, CW is negative
+      var buoyancy = this.boatWeight + this.sailorWeight;
+      var moment = buoyancy * this.buoyancyOffset + this.sailorWeight * this.sailorOffset;
+      return this.tack === 'starboard' ? -1 * moment : -1 * moment;
+    }
   }, {
     key: "calculateHeelMoment",
-    value: function calculateHeelMoment() {}
+    value: function calculateHeelMoment() {
+      //CCW is positive, CW is negative
+      var sailForce = this.calculateSailHeelForce();
+      var boardForce = this.calculateBoardHeelForce();
+      var moment = sailForce * this.sailOffset + boardForce * this.boardOffset;
+      return this.tack === 'starboard' ? moment : -1 * moment;
+    }
   }, {
     key: "calculateSailHeelForce",
     value: function calculateSailHeelForce() {
@@ -1123,7 +1158,6 @@ function () {
     key: "pushRudder",
     value: function pushRudder(dt, dir) {
       this.moveRudder(-dir * dt * this.rudderSpeed);
-      this.setHeelAngle(this.rudderAngle); /////testing only!!!!!!!!!!!!
     }
   }, {
     key: "moveRudder",
@@ -1215,25 +1249,26 @@ function () {
       var lift = this.calculateLiftOnSail();
       var drag = this.calculateDragOnSail();
       return [lift[0] + drag[0], lift[1] + drag[1]];
-    }
+    } //Math.cos(toRadians(Math.abs(this.heelAngle))) * 
+
   }, {
     key: "calculateDragOnSail",
     value: function calculateDragOnSail() {
       var absSailAngle = this.heading - this.sailAngle;
-      return this.sail.calculateDrag(absSailAngle, this.appWindVel);
+      return this.sail.calculateDrag(absSailAngle, this.appWindVel, this.heelAngle);
     }
   }, {
     key: "calculateLiftOnSail",
     value: function calculateLiftOnSail() {
       var absSailAngle = this.heading - this.sailAngle;
-      return this.sail.calculateLift(absSailAngle, this.appWindVel, this.tack === 'starboard');
+      return this.sail.calculateLift(absSailAngle, this.appWindVel, this.heelAngle);
     }
   }, {
     key: "calculateDragOnCenterBoard",
     value: function calculateDragOnCenterBoard() {
       var absBoardAngle = this.heading - 180;
       var waterVector = [-this.velocity[0], -this.velocity[1]];
-      var boardDrag = this.centerBoard.calculateDrag(absBoardAngle, waterVector);
+      var boardDrag = this.centerBoard.calculateDrag(absBoardAngle, waterVector, this.heelAngle);
       return boardDrag;
     }
   }, {
@@ -1241,8 +1276,8 @@ function () {
     value: function calculateLiftOnCenterBoard() {
       var absBoardAngle = this.heading - 180;
       var waterVector = [-this.velocity[0], -this.velocity[1]];
-      var boardDrag = this.centerBoard.calculateLift(absBoardAngle, waterVector, this.tack === 'port');
-      return boardDrag;
+      var boardLift = this.centerBoard.calculateLift(absBoardAngle, waterVector, this.heelAngle);
+      return boardLift;
     }
   }, {
     key: "calculateForceOnCenterBoard",
@@ -1304,6 +1339,7 @@ function () {
   _createClass(Foil, [{
     key: "calculateDrag",
     value: function calculateDrag(foilAngle, fluidVelocity) {
+      var tipAngle = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
       this.angle = foilAngle;
       var fluidDir = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getUnitVector"])(fluidVelocity);
       var fluidHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getHeadingDeg"])(fluidDir);
@@ -1312,23 +1348,21 @@ function () {
       var angleOfAttack = Math.abs(foilAngle - fluidHeading);
       var radAttack = -(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(angleOfAttack) - Math.PI);
       var dragMag = this.minDrag * fluidSpeed + Math.abs(this.cDrag * (fluidSpeed * fluidSpeed) * Math.sin(radAttack));
+      dragMag *= Math.cos(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(Math.abs(tipAngle)));
       return [dragMag * fluidDir[0], dragMag * fluidDir[1]];
     }
   }, {
     key: "calculateLift",
-    value: function calculateLift(foilAngle, fluidVelocity, invert) {
+    value: function calculateLift(foilAngle, fluidVelocity) {
+      var tipAngle = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
       var fluidDir = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getUnitVector"])(fluidVelocity);
       var fluidHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getHeadingDeg"])(fluidDir);
       var fluidSpeed = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["vectorMag"])(fluidVelocity);
       var angleOfAttack = foilAngle - fluidHeading;
       var radAttack = -(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(angleOfAttack) - Math.PI);
       var liftMag = this.cLift * (fluidSpeed * fluidSpeed) * Math.sin(radAttack) * Math.cos(radAttack);
-      var liftDir = [-fluidDir[1], fluidDir[0]]; //does not seem to be needed
-      // if (invert) {
-      //     liftDir = [fluidDir[1], -fluidDir[0]];
-      //     console.log('here');
-      // }
-
+      liftMag *= Math.cos(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(Math.abs(tipAngle)));
+      var liftDir = [-fluidDir[1], fluidDir[0]];
       return [liftMag * liftDir[0], liftMag * liftDir[1]];
     }
   }]);
@@ -1373,6 +1407,9 @@ function () {
     this.totalForce = [0, 0];
     this.sailHeelForce = 0;
     this.boardHeelForce = 0;
+    this.buoyancyForce = 0; // setInterval(() => {
+    //     console.log('right: ' + this.rightMoment + ' heel: ' + this.heelMoment);
+    // }, 1000);
   }
 
   _createClass(Model, [{
@@ -1403,9 +1440,15 @@ function () {
       this.liftOnBoard = this.boat.calculateLiftOnCenterBoard();
       this.forceOnBoard = this.boat.calculateForceOnCenterBoard();
       this.dragOnHull = this.boat.calculateDragOnHull();
+      this.totalForce = this.boat.calculateTotalForceOnBoat();
+      this.buoyancyForce = this.boat.sailorWeight + this.boat.boatWeight;
+      this.sailorForce = this.boat.sailorWeight;
       this.sailHeelForce = this.boat.calculateSailHeelForce();
       this.boardHeelForce = this.boat.calculateBoardHeelForce();
-      this.totalForce = this.boat.calculateTotalForceOnBoat();
+      this.heelMoment = this.boat.calculateHeelMoment();
+      this.rightMoment = this.boat.calculateRightMoment();
+      this.boat.updateTippingVelocity(dt);
+      this.boat.updateHeelAngle(dt);
       this.boat.updateVelocity(dt);
       this.boat.updatePosition(dt);
       this.boat.updateHeading(dt);

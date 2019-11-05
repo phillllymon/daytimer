@@ -9,66 +9,91 @@ import Foil from './foil';
 
 class Boat {
     constructor(){
-        this.sail = new Foil(0.8, 0.4, 0.1);      //0.8, 0.4, 0.1
-        this.centerBoard = new Foil(4, 1, 0); //4, 1, 0
-        this.hull = new Foil(0, 0, 3);          //0, 0, 1
+
+        //PARTS
+        this.sail = new Foil(0.8, 0.4, 0.1);        //0.8, 0.4, 0.1
+        this.centerBoard = new Foil(4, 1, 0);       //4, 1, 0
+        this.hull = new Foil(0, 0, 3);              //0, 0, 1
+
+        //PHYSICAL CONSTANTS
         this.mass = 5;
-        this.boatWeight = 500;
+        this.heelInertia = 500;
+        this.boatWeight = 10000;
         this.sailorWeight = 500;
-        this.sailorSpeed = 100; //      pixels/second
+        this.tipDragCoeff = 15;
+
+        //SPEEDS
+        this.sailorSpeed = 100;         //pixels/second
+        this.rudderSpeed = 100;         //deg/second
+        this.turningSpeed = 2;          //deg/second/rudder/degree
+        this.trimmingSpeed = 30         //deg/second
+        this.tippingVelocity = 0;       //deg/second
+
+        //initial component positions
         this.sailorPosition = 0;
-        this.maxBuoyancyOffset = 70;  //pixels
-        this.buoyancyOffset = 0;
         this.rudderAngle = 0;
-        this.position = [600, 400];
         this.sailAngle = 0;
         this.heelAngle = 0;
-        this.rudderSpeed = 100; //      deg/second
-        this.turningSpeed = 2;  //      deg/second/rudder/degree
+        this.mainSheetPos = 20;         //max |angle| of sail (sheet position)
+        this.tack = 'starboard';
+
+        //initial values
+        this.position = [600, 400];
         this.heading = 0;
-        this.speed = 0;
         this.velocity = [0, 0];
-        this.maxSpeed = 40;        //      pixels/second
-        this.mainSheetPos = 20; //      max |angle| of sail
-        this.trimmingSpeed = 30 //      deg/second
-        this.maxSheetAngle = 100;
-        //this.sailCd = .03;
-        this.minSailDrag = 10;
-        //this.sailCl = .08;
         this.appWindDir = [0, 0];
         this.appWindSpeed = 0;
         this.appWindVel = [0, 0];
-        this.tack = 'starboard';
-        this.maxSailOffset = 130;   //pixels
+
+        //dimensions
+        this.maxSailorPosition = 90;    //pixels
+        this.maxSheetAngle = 100;       //because of stays or whatever
+        this.maxBuoyancyOffset = 40;    //pixels
+        this.maxSailOffset = 130;       //pixels
         this.maxBoardOffset = 50;
-        this.sailOffset = this.maxSailOffset;
-        this.boardOffset = this.maxBoardOffset;
-    }
-
-    setHeelAngle(newAngle) {            //testing only!!!!!!
-        this.heelAngle = newAngle;
-        this.sailOffset = this.maxSailOffset * Math.cos(toRadians(Math.abs(this.heelAngle)));
-        this.boardOffset = this.maxBoardOffset * Math.cos(toRadians(Math.abs(this.heelAngle)));
-    }
-
-    updateHeelAngle() {
         
+        //offsets
+        this.sailorOffset = 0;
+        this.sailOffset = this.maxSailOffset;
+        this.boardOffset = this.maxBoardOffset; 
+        this.buoyancyOffset = 0; 
     }
 
-    updateTippingVelocity() {
-
+    updateHeelAngle(dt) {
+        this.heelAngle += (this.tippingVelocity * dt);
+        //also update offsets and sailor position
+        let angleFactor = Math.cos(toRadians(Math.abs(this.heelAngle)));
+        let zeroAngleFactor = Math.sin(toRadians(-1 * this.heelAngle));
+        this.sailOffset = this.maxSailOffset * angleFactor;
+        this.boardOffset = this.maxBoardOffset * angleFactor;
+        this.buoyancyOffset = this.maxBuoyancyOffset * zeroAngleFactor;
     }
 
-    calculateTotalMomemt() {
-
+    updateTippingVelocity(dt) {
+        let frictionMoment = this.tipDragCoeff * (this.tippingVelocity) * (this.tippingVelocity);
+        if (this.tippingVelocity < 0) frictionMoment *= -1;
+        let moment = this.calculateTotalMoment() + frictionMoment;
+        let acc = moment / this.heelInertia;
+        this.tippingVelocity -= (acc * dt);
     }
 
-    calculateBuoyancyMoment() {
-
+    calculateTotalMoment() {
+        let heelMoment = this.calculateHeelMoment();
+        let rightMoment = this.calculateRightMoment();
+        return heelMoment + rightMoment;
     }
 
-    calculateHeelMoment() {
+    calculateRightMoment() {    //CCW is positive, CW is negative
+        let buoyancy = this.boatWeight + this.sailorWeight;
+        let moment = (buoyancy * this.buoyancyOffset) + (this.sailorWeight * this.sailorOffset);
+        return (this.tack === 'starboard' ? -1 * moment : -1 * moment);
+    }
 
+    calculateHeelMoment() {     //CCW is positive, CW is negative
+        let sailForce = this.calculateSailHeelForce();
+        let boardForce = this.calculateBoardHeelForce();
+        let moment = (sailForce * this.sailOffset) + (boardForce * this.boardOffset);
+        return (this.tack === 'starboard' ? moment : -1 * moment);
     }
 
     calculateSailHeelForce() {
@@ -89,7 +114,6 @@ class Boat {
 
     pushRudder(dt, dir) {
         this.moveRudder(-dir * dt * this.rudderSpeed);
-        this.setHeelAngle(this.rudderAngle); /////testing only!!!!!!!!!!!!
     }
 
     moveRudder(angle) {
@@ -182,28 +206,30 @@ class Boat {
         return [lift[0] + drag[0], lift[1] + drag[1]];
     }
 
+    //Math.cos(toRadians(Math.abs(this.heelAngle))) * 
+
     calculateDragOnSail() {
         let absSailAngle = this.heading - this.sailAngle;
-        return this.sail.calculateDrag(absSailAngle, this.appWindVel);
+        return this.sail.calculateDrag(absSailAngle, this.appWindVel, this.heelAngle);
     }
 
     calculateLiftOnSail() {
         let absSailAngle = this.heading - this.sailAngle;
-        return this.sail.calculateLift(absSailAngle, this.appWindVel, (this.tack === 'starboard'));
+        return this.sail.calculateLift(absSailAngle, this.appWindVel, this.heelAngle);
     }
 
     calculateDragOnCenterBoard() {
         let absBoardAngle = this.heading - 180;
         let waterVector = [-this.velocity[0], -this.velocity[1]];
-        let boardDrag = this.centerBoard.calculateDrag(absBoardAngle, waterVector);
+        let boardDrag = this.centerBoard.calculateDrag(absBoardAngle, waterVector, this.heelAngle);
         return boardDrag;
     }
 
     calculateLiftOnCenterBoard() {
         let absBoardAngle = this.heading - 180;
         let waterVector = [-this.velocity[0], -this.velocity[1]];
-        let boardDrag = this.centerBoard.calculateLift(absBoardAngle, waterVector, (this.tack === 'port'));
-        return boardDrag;
+        let boardLift = this.centerBoard.calculateLift(absBoardAngle, waterVector, this.heelAngle);
+        return boardLift;
     }
 
     calculateForceOnCenterBoard() {
