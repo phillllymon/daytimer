@@ -247,11 +247,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util_vector_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/vector_util */ "./javascripts/components/util/vector_util.js");
 
 var makeInArrow = function makeInArrow(ctx, x, y, angle, offset, length, width, color) {
+  var arrowLength = Math.pow(length, 0.6) + 5;
   ctx.beginPath();
   ctx.lineWidth = width;
   ctx.strokeStyle = color;
   ctx.moveTo(x - offset * Math.sin(angle), y + offset * Math.cos(angle));
-  ctx.lineTo(x - (offset + length) * Math.sin(angle), y + (offset + length) * Math.cos(angle));
+  ctx.lineTo(x - (offset + arrowLength) * Math.sin(angle), y + (offset + arrowLength) * Math.cos(angle));
   ctx.stroke();
   ctx.lineWidth = 1;
   ctx.fillStyle = color;
@@ -263,17 +264,18 @@ var makeInArrow = function makeInArrow(ctx, x, y, angle, offset, length, width, 
   ctx.fill();
 };
 var makeOutArrow = function makeOutArrow(ctx, x, y, angle, offset, length, width, color) {
+  var arrowLength = Math.pow(length, 0.6) + 5;
   ctx.beginPath();
   ctx.lineWidth = width;
   ctx.strokeStyle = color;
   ctx.moveTo(x + offset * Math.sin(angle), y - offset * Math.cos(angle));
-  ctx.lineTo(x + (offset + length) * Math.sin(angle), y - (offset + length) * Math.cos(angle));
+  ctx.lineTo(x + (offset + arrowLength) * Math.sin(angle), y - (offset + arrowLength) * Math.cos(angle));
   ctx.stroke();
   ctx.lineWidth = 1;
   ctx.fillStyle = color;
-  ctx.moveTo(x + (offset + length + 2) * Math.sin(angle), y - (offset + length + 2) * Math.cos(angle));
-  ctx.lineTo(x + (offset + length - 8) * Math.sin(angle + 0.15), y - (offset + length - 8) * Math.cos(angle + 0.15));
-  ctx.lineTo(x + (offset + length - 8) * Math.sin(angle - 0.15), y - (offset + length - 8) * Math.cos(angle - 0.15));
+  ctx.moveTo(x + (offset + arrowLength + 2) * Math.sin(angle), y - (offset + arrowLength + 2) * Math.cos(angle));
+  ctx.lineTo(x + (offset + arrowLength - 8) * Math.sin(angle + 0.15), y - (offset + arrowLength - 8) * Math.cos(angle + 0.15));
+  ctx.lineTo(x + (offset + arrowLength - 8) * Math.sin(angle - 0.15), y - (offset + arrowLength - 8) * Math.cos(angle - 0.15));
   ctx.closePath();
   ctx.stroke();
   ctx.fill();
@@ -701,14 +703,33 @@ function (_React$Component) {
       var ctx = this.ctx;
       ctx.translate(150, 300); //heeling forces
 
-      var sailHealForce = model.sailHeelingForce;
-      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, -30, -200, -Math.PI / 2, 60, sailHealForce, 8, 'red'); //hull
+      if (boat.tack === 'starboard') {
+        var sailHeelForce = model.sailHeelForce;
+        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, -30, -1 * boat.sailOffset, -Math.PI / 2, 60, sailHeelForce, 8, 'red');
+        var boardHeelForce = model.boardHeelForce;
+        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, 30, boat.boardOffset, Math.PI / 2, 60, boardHeelForce, 8, 'red');
+      } else {
+        var _sailHeelForce = model.sailHeelForce;
+        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, 30, -1 * boat.sailOffset, Math.PI / 2, 60, _sailHeelForce, 8, 'red');
+        var _boardHeelForce = model.boardHeelForce;
+        Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, -30, boat.boardOffset, -Math.PI / 2, 60, _boardHeelForce, 8, 'red');
+      }
+
+      var heelAngle = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(boat.heelAngle);
+      var floatAmt = 25 * Math.sin(Math.abs(heelAngle));
+      ctx.translate(0, -1 * floatAmt);
+      ctx.rotate(heelAngle); //hull
 
       ctx.beginPath();
       ctx.fillStyle = 'brown';
       ctx.arc(-20, -20, 40, Math.PI / 2, Math.PI, false);
       ctx.lineTo(20, -20);
       ctx.arc(20, -20, 40, 0, Math.PI / 2);
+      ctx.fill(); /////////ROTATION POINT!
+
+      ctx.beginPath();
+      ctx.fillStyle = 'green';
+      ctx.arc(0, 0, 10, 2 * Math.PI, 0, false);
       ctx.fill(); //centerboard
 
       ctx.beginPath();
@@ -736,7 +757,14 @@ function (_React$Component) {
       ctx.strokeStyle = 'black';
       ctx.moveTo(0, -50);
       ctx.lineTo(boomDist, -50);
-      ctx.stroke(); //translate back
+      ctx.stroke(); //sailor
+
+      ctx.beginPath();
+      ctx.fillStyle = 'orange';
+      ctx.arc(boat.sailorPosition, -40, 10, 2 * Math.PI, 0, false);
+      ctx.fill();
+      ctx.rotate(-1 * heelAngle);
+      ctx.translate(0, floatAmt); //translate back
 
       ctx.translate(-150, -300);
     }
@@ -1003,16 +1031,25 @@ function () {
   function Boat() {
     _classCallCheck(this, Boat);
 
-    this.sail = new _foil__WEBPACK_IMPORTED_MODULE_1__["default"](0.6, 0.4, 0.01); //0.6, 0.4, 0.01
+    this.sail = new _foil__WEBPACK_IMPORTED_MODULE_1__["default"](0.8, 0.4, 0.1); //0.8, 0.4, 0.1
 
-    this.centerBoard = new _foil__WEBPACK_IMPORTED_MODULE_1__["default"](3, 0.5, 0); //3, 0.5, 0
+    this.centerBoard = new _foil__WEBPACK_IMPORTED_MODULE_1__["default"](4, 1, 0); //4, 1, 0
 
-    this.hull = new _foil__WEBPACK_IMPORTED_MODULE_1__["default"](0, 0, 1); //0, 0, 1
+    this.hull = new _foil__WEBPACK_IMPORTED_MODULE_1__["default"](0, 0, 3); //0, 0, 1
 
     this.mass = 5;
+    this.boatWeight = 500;
+    this.sailorWeight = 500;
+    this.sailorSpeed = 100; //      pixels/second
+
+    this.sailorPosition = 0;
+    this.maxBuoyancyOffset = 70; //pixels
+
+    this.buoyancyOffset = 0;
     this.rudderAngle = 0;
     this.position = [600, 400];
     this.sailAngle = 0;
+    this.heelAngle = 0;
     this.rudderSpeed = 100; //      deg/second
 
     this.turningSpeed = 2; //      deg/second/rudder/degree
@@ -1034,12 +1071,59 @@ function () {
     this.appWindSpeed = 0;
     this.appWindVel = [0, 0];
     this.tack = 'starboard';
+    this.maxSailOffset = 130; //pixels
+
+    this.maxBoardOffset = 50;
+    this.sailOffset = this.maxSailOffset;
+    this.boardOffset = this.maxBoardOffset;
   }
 
   _createClass(Boat, [{
+    key: "setHeelAngle",
+    value: function setHeelAngle(newAngle) {
+      //testing only!!!!!!
+      this.heelAngle = newAngle;
+      this.sailOffset = this.maxSailOffset * Math.cos(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(Math.abs(this.heelAngle)));
+      this.boardOffset = this.maxBoardOffset * Math.cos(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(Math.abs(this.heelAngle)));
+    }
+  }, {
+    key: "updateHeelAngle",
+    value: function updateHeelAngle() {}
+  }, {
+    key: "updateTippingVelocity",
+    value: function updateTippingVelocity() {}
+  }, {
+    key: "calculateTotalMomemt",
+    value: function calculateTotalMomemt() {}
+  }, {
+    key: "calculateBuoyancyMoment",
+    value: function calculateBuoyancyMoment() {}
+  }, {
+    key: "calculateHeelMoment",
+    value: function calculateHeelMoment() {}
+  }, {
+    key: "calculateSailHeelForce",
+    value: function calculateSailHeelForce() {
+      var sailForce = this.calculateForceOnSail();
+      var sailForceHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getHeadingDeg"])(sailForce);
+      var angle = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(this.heading - sailForceHeading);
+      var sailHeelForce = Math.abs(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["vectorMag"])(sailForce) * Math.sin(angle));
+      return sailHeelForce;
+    }
+  }, {
+    key: "calculateBoardHeelForce",
+    value: function calculateBoardHeelForce() {
+      var boardForce = this.calculateForceOnCenterBoard();
+      var boardForceHeading = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["getHeadingDeg"])(boardForce);
+      var angle = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(this.heading - boardForceHeading);
+      var boardHeelForce = Math.abs(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["vectorMag"])(boardForce) * Math.sin(angle));
+      return boardHeelForce;
+    }
+  }, {
     key: "pushRudder",
     value: function pushRudder(dt, dir) {
       this.moveRudder(-dir * dt * this.rudderSpeed);
+      this.setHeelAngle(this.rudderAngle); /////testing only!!!!!!!!!!!!
     }
   }, {
     key: "moveRudder",
@@ -1175,12 +1259,6 @@ function () {
       var hullDrag = this.hull.calculateDrag(absHullAngle, waterVector);
       return hullDrag;
     }
-  }, {
-    key: "calculateSailHeelingForce",
-    value: function calculateSailHeelingForce() {
-      var sailForce = this.calculateForceOnSail();
-      return 20;
-    }
   }]);
 
   return Boat;
@@ -1293,8 +1371,8 @@ function () {
     this.forceOnBoard = [0, 0];
     this.dragOnHull = [0, 0];
     this.totalForce = [0, 0];
-    this.sailHeelingForce = 0;
-    this.boardHeelingForce = 0;
+    this.sailHeelForce = 0;
+    this.boardHeelForce = 0;
   }
 
   _createClass(Model, [{
@@ -1325,7 +1403,8 @@ function () {
       this.liftOnBoard = this.boat.calculateLiftOnCenterBoard();
       this.forceOnBoard = this.boat.calculateForceOnCenterBoard();
       this.dragOnHull = this.boat.calculateDragOnHull();
-      this.sailHeelingForce = this.boat.calculateSailHeelingForce();
+      this.sailHeelForce = this.boat.calculateSailHeelForce();
+      this.boardHeelForce = this.boat.calculateBoardHeelForce();
       this.totalForce = this.boat.calculateTotalForceOnBoat();
       this.boat.updateVelocity(dt);
       this.boat.updatePosition(dt);

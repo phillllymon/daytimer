@@ -47,8 +47,25 @@ class SternDiagram extends React.Component {
         ctx.translate(150, 300);
 
         //heeling forces
-        let sailHealForce = model.sailHeelingForce;
-        makeInArrow(ctx, -30, -200, -Math.PI / 2, 60, sailHealForce, 8, 'red');
+        if (boat.tack === 'starboard') {
+            let sailHeelForce = model.sailHeelForce;
+            makeInArrow(ctx, -30, (-1 * boat.sailOffset), -Math.PI / 2, 60, sailHeelForce, 8, 'red');
+            let boardHeelForce = model.boardHeelForce;
+            makeInArrow(ctx, 30, boat.boardOffset, Math.PI / 2, 60, boardHeelForce, 8, 'red');
+        }
+        else {
+            let sailHeelForce = model.sailHeelForce;
+            makeInArrow(ctx, 30, (-1 * boat.sailOffset), Math.PI / 2, 60, sailHeelForce, 8, 'red');
+            let boardHeelForce = model.boardHeelForce;
+            makeInArrow(ctx, -30, boat.boardOffset, -Math.PI / 2, 60, boardHeelForce, 8, 'red');
+        }
+        
+        
+        let heelAngle = toRadians(boat.heelAngle);
+        let floatAmt = 25 * Math.sin(Math.abs(heelAngle));
+        
+        ctx.translate(0, -1 * floatAmt);
+        ctx.rotate(heelAngle);
 
         //hull
         ctx.beginPath();
@@ -56,6 +73,12 @@ class SternDiagram extends React.Component {
         ctx.arc(-20, -20, 40, Math.PI / 2, Math.PI, false);
         ctx.lineTo(20, -20);
         ctx.arc(20, -20, 40, 0, Math.PI / 2);
+        ctx.fill();
+
+        /////////ROTATION POINT!
+        ctx.beginPath();
+        ctx.fillStyle = 'green';
+        ctx.arc(0, 0, 10, 2 * Math.PI, 0, false);
         ctx.fill();
 
         //centerboard
@@ -88,7 +111,17 @@ class SternDiagram extends React.Component {
         ctx.moveTo(0, -50);
         ctx.lineTo(boomDist, -50);
         ctx.stroke();
+
+        //sailor
+        ctx.beginPath();
+        ctx.fillStyle = 'orange';
+        ctx.arc(boat.sailorPosition, -40, 10, 2 * Math.PI, 0, false);
+        ctx.fill();
         
+        ctx.rotate(-1 * heelAngle);
+        ctx.translate(0, floatAmt);
+        
+
         //translate back
         ctx.translate(-150, -300);
     }

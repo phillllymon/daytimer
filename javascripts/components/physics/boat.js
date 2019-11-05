@@ -9,13 +9,20 @@ import Foil from './foil';
 
 class Boat {
     constructor(){
-        this.sail = new Foil(0.6, 0.4, 0.01);      //0.6, 0.4, 0.01
-        this.centerBoard = new Foil(3, 0.5, 0); //3, 0.5, 0
-        this.hull = new Foil(0, 0, 1);          //0, 0, 1
+        this.sail = new Foil(0.8, 0.4, 0.1);      //0.8, 0.4, 0.1
+        this.centerBoard = new Foil(4, 1, 0); //4, 1, 0
+        this.hull = new Foil(0, 0, 3);          //0, 0, 1
         this.mass = 5;
+        this.boatWeight = 500;
+        this.sailorWeight = 500;
+        this.sailorSpeed = 100; //      pixels/second
+        this.sailorPosition = 0;
+        this.maxBuoyancyOffset = 70;  //pixels
+        this.buoyancyOffset = 0;
         this.rudderAngle = 0;
         this.position = [600, 400];
         this.sailAngle = 0;
+        this.heelAngle = 0;
         this.rudderSpeed = 100; //      deg/second
         this.turningSpeed = 2;  //      deg/second/rudder/degree
         this.heading = 0;
@@ -32,10 +39,57 @@ class Boat {
         this.appWindSpeed = 0;
         this.appWindVel = [0, 0];
         this.tack = 'starboard';
+        this.maxSailOffset = 130;   //pixels
+        this.maxBoardOffset = 50;
+        this.sailOffset = this.maxSailOffset;
+        this.boardOffset = this.maxBoardOffset;
+    }
+
+    setHeelAngle(newAngle) {            //testing only!!!!!!
+        this.heelAngle = newAngle;
+        this.sailOffset = this.maxSailOffset * Math.cos(toRadians(Math.abs(this.heelAngle)));
+        this.boardOffset = this.maxBoardOffset * Math.cos(toRadians(Math.abs(this.heelAngle)));
+    }
+
+    updateHeelAngle() {
+        
+    }
+
+    updateTippingVelocity() {
+
+    }
+
+    calculateTotalMomemt() {
+
+    }
+
+    calculateBuoyancyMoment() {
+
+    }
+
+    calculateHeelMoment() {
+
+    }
+
+    calculateSailHeelForce() {
+        let sailForce = this.calculateForceOnSail();
+        let sailForceHeading = getHeadingDeg(sailForce);
+        let angle = toRadians(this.heading - sailForceHeading);
+        let sailHeelForce = Math.abs(vectorMag(sailForce) * Math.sin(angle));
+        return sailHeelForce;
+    }
+
+    calculateBoardHeelForce() {
+        let boardForce = this.calculateForceOnCenterBoard();
+        let boardForceHeading = getHeadingDeg(boardForce);
+        let angle = toRadians(this.heading - boardForceHeading);
+        let boardHeelForce = Math.abs(vectorMag(boardForce) * Math.sin(angle));
+        return boardHeelForce;
     }
 
     pushRudder(dt, dir) {
         this.moveRudder(-dir * dt * this.rudderSpeed);
+        this.setHeelAngle(this.rudderAngle); /////testing only!!!!!!!!!!!!
     }
 
     moveRudder(angle) {
@@ -163,11 +217,6 @@ class Boat {
         let waterVector = [-this.velocity[0], -this.velocity[1]];
         let hullDrag = this.hull.calculateDrag(absHullAngle, waterVector);
         return hullDrag;
-    }
-
-    calculateSailHeelingForce() {
-        let sailForce = this.calculateForceOnSail();
-        return 20;
     }
 
 }

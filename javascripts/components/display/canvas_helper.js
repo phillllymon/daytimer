@@ -6,6 +6,7 @@ import {
 } from '../util/vector_util';
 
 export const makeInArrow = (ctx, x, y, angle, offset, length, width, color) => {
+    let arrowLength = Math.pow(length, 0.6) + 5;
     ctx.beginPath();
     ctx.lineWidth = width;
     ctx.strokeStyle = color;
@@ -14,8 +15,8 @@ export const makeInArrow = (ctx, x, y, angle, offset, length, width, color) => {
         y + (offset * Math.cos(angle))
     );
     ctx.lineTo(
-        x - ((offset + length) * Math.sin(angle)),
-        y + ((offset + length) * Math.cos(angle))
+        x - ((offset + arrowLength) * Math.sin(angle)),
+        y + ((offset + arrowLength) * Math.cos(angle))
     );
     ctx.stroke();
     ctx.lineWidth = 1;
@@ -38,6 +39,7 @@ export const makeInArrow = (ctx, x, y, angle, offset, length, width, color) => {
 };
 
 export const makeOutArrow = (ctx, x, y, angle, offset, length, width, color) => {
+    let arrowLength = Math.pow(length, 0.6) + 5;
     ctx.beginPath();
     ctx.lineWidth = width;
     ctx.strokeStyle = color;
@@ -46,23 +48,23 @@ export const makeOutArrow = (ctx, x, y, angle, offset, length, width, color) => 
         y - (offset * Math.cos(angle))
     );
     ctx.lineTo(
-        x + ((offset + length) * Math.sin(angle)),
-        y - ((offset + length) * Math.cos(angle))
+        x + ((offset + arrowLength) * Math.sin(angle)),
+        y - ((offset + arrowLength) * Math.cos(angle))
     );
     ctx.stroke();
     ctx.lineWidth = 1;
     ctx.fillStyle = color;
     ctx.moveTo(
-        x + ((offset + length + 2) * Math.sin(angle)),
-        y - ((offset + length + 2) * Math.cos(angle))
+        x + ((offset + arrowLength + 2) * Math.sin(angle)),
+        y - ((offset + arrowLength + 2) * Math.cos(angle))
     );
     ctx.lineTo(
-        x + ((offset + length - 8) * Math.sin(angle + 0.15)),
-        y - ((offset + length - 8) * Math.cos(angle + 0.15))
+        x + ((offset + arrowLength - 8) * Math.sin(angle + 0.15)),
+        y - ((offset + arrowLength - 8) * Math.cos(angle + 0.15))
     );
     ctx.lineTo(
-        x + ((offset + length - 8) * Math.sin(angle - 0.15)),
-        y - ((offset + length - 8) * Math.cos(angle - 0.15))
+        x + ((offset + arrowLength - 8) * Math.sin(angle - 0.15)),
+        y - ((offset + arrowLength - 8) * Math.cos(angle - 0.15))
     );
     ctx.closePath();
     ctx.stroke();
