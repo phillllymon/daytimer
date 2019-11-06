@@ -46,7 +46,7 @@ class Boat {
         this.appWindVel = [0, 0];
 
         //dimensions
-        this.maxSailorPosition = 90;    //pixels
+        this.maxSailorPosition = 80;    //pixels
         this.maxSheetAngle = 100;       //because of stays or whatever
         this.maxBuoyancyOffset = 40;    //pixels
         this.maxSailOffset = 130;       //pixels
@@ -61,12 +61,22 @@ class Boat {
 
     updateHeelAngle(dt) {
         this.heelAngle += (this.tippingVelocity * dt);
-        //also update offsets and sailor position
         let angleFactor = Math.cos(toRadians(Math.abs(this.heelAngle)));
         let zeroAngleFactor = Math.sin(toRadians(-1 * this.heelAngle));
         this.sailOffset = this.maxSailOffset * angleFactor;
         this.boardOffset = this.maxBoardOffset * angleFactor;
         this.buoyancyOffset = this.maxBuoyancyOffset * zeroAngleFactor;
+        //move sailor
+        let moveAmt = this.sailorSpeed * dt;
+        if (this.heelAngle > 0) moveAmt *= -1;
+        if (Math.abs(this.heelAngle) > 1) this.sailorPosition += moveAmt;
+        if (this.sailorPosition > 0){
+            if (this.sailorPosition > this.maxSailorPosition) this.sailorPosition = this.maxSailorPosition;
+        }
+        else {
+            if (this.sailorPosition < -1 * this.maxSailorPosition) this.sailorPosition = -1 * this.maxSailorPosition;
+        }
+        this.sailorOffset = this.sailorPosition * angleFactor;
     }
 
     updateTippingVelocity(dt) {

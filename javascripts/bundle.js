@@ -713,11 +713,11 @@ function (_React$Component) {
       ctx.lineTo(20, -20);
       ctx.arc(20, -20, 40, 0, Math.PI / 2);
       ctx.fill(); /////////ROTATION POINT!
-
-      ctx.beginPath();
-      ctx.fillStyle = 'orange';
-      ctx.arc(0, 0, 10, 2 * Math.PI, 0, false);
-      ctx.fill(); //centerboard
+      // ctx.beginPath();
+      // ctx.fillStyle = 'orange';
+      // ctx.arc(0, 0, 10, 2 * Math.PI, 0, false);
+      // ctx.fill();
+      //centerboard
 
       ctx.beginPath();
       ctx.fillStyle = 'black';
@@ -745,11 +745,12 @@ function (_React$Component) {
       ctx.moveTo(0, -50);
       ctx.lineTo(boomDist, -50);
       ctx.stroke(); //sailor
-      // ctx.beginPath();
-      // ctx.fillStyle = 'orange';
-      // ctx.arc(boat.sailorPosition, -40, 10, 2 * Math.PI, 0, false);
-      // ctx.fill();
 
+      ctx.beginPath();
+      ctx.fillStyle = 'orange';
+      ctx.arc(boat.sailorPosition, -40, 10, 2 * Math.PI, 0, false);
+      ctx.fill();
+      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, boat.sailorOffset, -40, Math.PI - heelAngle, 30, boat.sailorWeight, 8, 'black');
       ctx.rotate(-1 * heelAngle);
       ctx.translate(0, floatAmt); //heeling forces
 
@@ -767,9 +768,7 @@ function (_React$Component) {
 
 
       var buoyancyForce = model.buoyancyForce;
-      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, -1 * boat.buoyancyOffset, -30, 0, 70, buoyancyForce, 8, 'green');
-      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, 0, 30, Math.PI, 70 + floatAmt, boat.boatWeight / 4, 8, 'black'); //eventually won't show this one, only sailor weight
-      //translate back
+      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, -1 * boat.buoyancyOffset, -30, 0, 70, buoyancyForce, 8, 'green'); //translate back
 
       ctx.translate(-150, -300);
     }
@@ -1076,7 +1075,7 @@ function () {
     this.appWindSpeed = 0;
     this.appWindVel = [0, 0]; //dimensions
 
-    this.maxSailorPosition = 90; //pixels
+    this.maxSailorPosition = 80; //pixels
 
     this.maxSheetAngle = 100; //because of stays or whatever
 
@@ -1095,13 +1094,24 @@ function () {
   _createClass(Boat, [{
     key: "updateHeelAngle",
     value: function updateHeelAngle(dt) {
-      this.heelAngle += this.tippingVelocity * dt; //also update offsets and sailor position
-
+      this.heelAngle += this.tippingVelocity * dt;
       var angleFactor = Math.cos(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(Math.abs(this.heelAngle)));
       var zeroAngleFactor = Math.sin(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(-1 * this.heelAngle));
       this.sailOffset = this.maxSailOffset * angleFactor;
       this.boardOffset = this.maxBoardOffset * angleFactor;
-      this.buoyancyOffset = this.maxBuoyancyOffset * zeroAngleFactor;
+      this.buoyancyOffset = this.maxBuoyancyOffset * zeroAngleFactor; //move sailor
+
+      var moveAmt = this.sailorSpeed * dt;
+      if (this.heelAngle > 0) moveAmt *= -1;
+      if (Math.abs(this.heelAngle) > 1) this.sailorPosition += moveAmt;
+
+      if (this.sailorPosition > 0) {
+        if (this.sailorPosition > this.maxSailorPosition) this.sailorPosition = this.maxSailorPosition;
+      } else {
+        if (this.sailorPosition < -1 * this.maxSailorPosition) this.sailorPosition = -1 * this.maxSailorPosition;
+      }
+
+      this.sailorOffset = this.sailorPosition * angleFactor;
     }
   }, {
     key: "updateTippingVelocity",

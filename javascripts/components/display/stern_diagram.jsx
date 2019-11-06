@@ -60,10 +60,10 @@ class SternDiagram extends React.Component {
         ctx.fill();
 
         /////////ROTATION POINT!
-        ctx.beginPath();
-        ctx.fillStyle = 'orange';
-        ctx.arc(0, 0, 10, 2 * Math.PI, 0, false);
-        ctx.fill();
+        // ctx.beginPath();
+        // ctx.fillStyle = 'orange';
+        // ctx.arc(0, 0, 10, 2 * Math.PI, 0, false);
+        // ctx.fill();
 
         //centerboard
         ctx.beginPath();
@@ -97,10 +97,12 @@ class SternDiagram extends React.Component {
         ctx.stroke();
 
         //sailor
-        // ctx.beginPath();
-        // ctx.fillStyle = 'orange';
-        // ctx.arc(boat.sailorPosition, -40, 10, 2 * Math.PI, 0, false);
-        // ctx.fill();
+        ctx.beginPath();
+        ctx.fillStyle = 'orange';
+        ctx.arc(boat.sailorPosition, -40, 10, 2 * Math.PI, 0, false);
+        ctx.fill();
+
+        makeInArrow(ctx, boat.sailorOffset, -40, Math.PI - heelAngle, 30, boat.sailorWeight, 8, 'black');
         
         ctx.rotate(-1 * heelAngle);
         ctx.translate(0, floatAmt);
@@ -122,7 +124,7 @@ class SternDiagram extends React.Component {
         //righting forces
         let buoyancyForce = model.buoyancyForce;
         makeInArrow(ctx, (-1 * boat.buoyancyOffset), -30, 0, 70, buoyancyForce, 8, 'green');
-        makeInArrow(ctx, 0, 30, Math.PI, 70 + floatAmt, boat.boatWeight / 4, 8, 'black');   //eventually won't show this one, only sailor weight
+        
 
 
         //translate back
