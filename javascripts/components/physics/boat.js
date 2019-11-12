@@ -18,12 +18,12 @@ class Boat {
         //PHYSICAL CONSTANTS
         this.mass = 5;
         this.heelInertia = 500;
-        this.boatWeight = 10000;
-        this.sailorWeight = 500;
-        this.tipDragCoeff = 15;
+        this.boatWeight = 500;
+        this.sailorWeight = 5000;
+        this.tipDragCoeff = 750;
 
         //SPEEDS
-        this.sailorSpeed = 100;         //pixels/second
+        this.maxSailorSpeed = 500;         //pixels/second
         this.rudderSpeed = 100;         //deg/second
         this.turningSpeed = 2;          //deg/second/rudder/degree
         this.trimmingSpeed = 30         //deg/second
@@ -39,14 +39,14 @@ class Boat {
 
         //initial values
         this.position = [600, 400];
-        this.heading = 0;
+        this.heading = 270;
         this.velocity = [0, 0];
         this.appWindDir = [0, 0];
         this.appWindSpeed = 0;
         this.appWindVel = [0, 0];
 
         //dimensions
-        this.maxSailorPosition = 80;    //pixels
+        this.maxSailorPosition = 76;    //pixels
         this.maxSheetAngle = 100;       //because of stays or whatever
         this.maxBuoyancyOffset = 40;    //pixels
         this.maxSailOffset = 130;       //pixels
@@ -67,7 +67,8 @@ class Boat {
         this.boardOffset = this.maxBoardOffset * angleFactor;
         this.buoyancyOffset = this.maxBuoyancyOffset * zeroAngleFactor;
         //move sailor
-        let moveAmt = this.sailorSpeed * dt;
+        let sailorSpeed = this.maxSailorSpeed * Math.sin(Math.abs(toRadians(this.heelAngle)));
+        let moveAmt = sailorSpeed * dt;
         if (this.heelAngle > 0) moveAmt *= -1;
         if (Math.abs(this.heelAngle) > 1) this.sailorPosition += moveAmt;
         if (this.sailorPosition > 0){

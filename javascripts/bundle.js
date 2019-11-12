@@ -703,29 +703,27 @@ function (_React$Component) {
       var ctx = this.ctx;
       ctx.translate(150, 300);
       var heelAngle = Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_1__["toRadians"])(boat.heelAngle);
-      var floatAmt = 25 * Math.sin(Math.abs(heelAngle));
+      var floatAmt = 20 * Math.sin(Math.abs(heelAngle));
       ctx.translate(0, -1 * floatAmt);
-      ctx.rotate(heelAngle); //hull
+      ctx.rotate(heelAngle);
+      var headLower = 0;
+      var buttPosition = boat.sailorPosition;
 
-      ctx.beginPath();
-      ctx.fillStyle = 'brown';
-      ctx.arc(-20, -20, 40, Math.PI / 2, Math.PI, false);
-      ctx.lineTo(20, -20);
-      ctx.arc(20, -20, 40, 0, Math.PI / 2);
-      ctx.fill(); /////////ROTATION POINT!
-      // ctx.beginPath();
-      // ctx.fillStyle = 'orange';
-      // ctx.arc(0, 0, 10, 2 * Math.PI, 0, false);
-      // ctx.fill();
-      //centerboard
+      if (Math.abs(buttPosition) > 45) {
+        var extra = Math.abs(buttPosition) - 50;
+
+        if (extra > 24) {
+          extra = 24;
+        }
+
+        headLower = 25 - Math.sqrt(625 - extra * extra);
+        buttPosition = buttPosition > 0 ? 50 : -50;
+      }
+
+      var poop = Math.sqrt(-1); //mast
 
       ctx.beginPath();
       ctx.fillStyle = 'black';
-      ctx.moveTo(-2, 20);
-      ctx.fillRect(-2, 20, 4, 60);
-      ctx.fill(); //mast
-
-      ctx.beginPath();
       ctx.moveTo(-2, -290);
       ctx.fillRect(-2, -290, 4, 270);
       ctx.fill();
@@ -744,13 +742,49 @@ function (_React$Component) {
       ctx.strokeStyle = 'black';
       ctx.moveTo(0, -50);
       ctx.lineTo(boomDist, -50);
-      ctx.stroke(); //sailor
+      ctx.stroke(); //sailor legs
+
+      var legLength = 27;
+      var a = buttPosition / 2;
+      var b = Math.sqrt(legLength * legLength - a * a);
+      ctx.beginPath();
+      ctx.lineWidth = 10;
+      ctx.strokeStyle = 'orange';
+      ctx.lineCap = 'round';
+      ctx.moveTo(0, -20);
+      console.log(a);
+      ctx.lineTo(0 + a, -20 - b);
+      ctx.lineTo(buttPosition, -20);
+      ctx.stroke(); //sailor body
+
+      ctx.beginPath();
+      ctx.moveTo(buttPosition, -25);
+      ctx.strokeStyle = 'red';
+      ctx.lineWidth = 18;
+      ctx.lineCap = 'round';
+      ctx.lineTo(boat.sailorPosition, -57 + headLower);
+      ctx.stroke();
+      ctx.lineCap = 'butt'; //sailor head
 
       ctx.beginPath();
       ctx.fillStyle = 'orange';
-      ctx.arc(boat.sailorPosition, -40, 10, 2 * Math.PI, 0, false);
-      ctx.fill();
-      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, boat.sailorOffset, -40, Math.PI - heelAngle, 30, boat.sailorWeight, 8, 'black');
+      ctx.arc(boat.sailorPosition, -75 + headLower, 9, 2 * Math.PI, 0, false);
+      ctx.fill(); //hull
+
+      ctx.beginPath();
+      ctx.fillStyle = 'brown';
+      ctx.arc(-20, -20, 40, Math.PI / 2, Math.PI, false);
+      ctx.lineTo(20, -20);
+      ctx.arc(20, -20, 40, 0, Math.PI / 2);
+      ctx.fill(); //centerboard
+
+      ctx.beginPath();
+      ctx.fillStyle = 'black';
+      ctx.moveTo(-2, 20);
+      ctx.fillRect(-2, 20, 4, 60);
+      ctx.fill(); //sailor force
+
+      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, 0.8 * boat.sailorOffset, -40, Math.PI - heelAngle, 60, boat.sailorWeight, 8, 'black');
       ctx.rotate(-1 * heelAngle);
       ctx.translate(0, floatAmt); //heeling forces
 
@@ -764,7 +798,7 @@ function (_React$Component) {
         Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, 30, -1 * boat.sailOffset, Math.PI / 2, 60, _sailHeelForce, 8, 'red');
         var _boardHeelForce = model.boardHeelForce;
         Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_2__["makeInArrow"])(ctx, -30, boat.boardOffset, -Math.PI / 2, 60, _boardHeelForce, 8, 'red');
-      } //righting forces
+      } //righting forces ALSO SAILOR FORCE ABOVE!!!
 
 
       var buoyancyForce = model.buoyancyForce;
@@ -1045,11 +1079,11 @@ function () {
 
     this.mass = 5;
     this.heelInertia = 500;
-    this.boatWeight = 10000;
-    this.sailorWeight = 500;
-    this.tipDragCoeff = 15; //SPEEDS
+    this.boatWeight = 500;
+    this.sailorWeight = 5000;
+    this.tipDragCoeff = 750; //SPEEDS
 
-    this.sailorSpeed = 100; //pixels/second
+    this.maxSailorSpeed = 500; //pixels/second
 
     this.rudderSpeed = 100; //deg/second
 
@@ -1069,13 +1103,13 @@ function () {
     this.tack = 'starboard'; //initial values
 
     this.position = [600, 400];
-    this.heading = 0;
+    this.heading = 270;
     this.velocity = [0, 0];
     this.appWindDir = [0, 0];
     this.appWindSpeed = 0;
     this.appWindVel = [0, 0]; //dimensions
 
-    this.maxSailorPosition = 80; //pixels
+    this.maxSailorPosition = 76; //pixels
 
     this.maxSheetAngle = 100; //because of stays or whatever
 
@@ -1101,7 +1135,8 @@ function () {
       this.boardOffset = this.maxBoardOffset * angleFactor;
       this.buoyancyOffset = this.maxBuoyancyOffset * zeroAngleFactor; //move sailor
 
-      var moveAmt = this.sailorSpeed * dt;
+      var sailorSpeed = this.maxSailorSpeed * Math.sin(Math.abs(Object(_util_vector_util__WEBPACK_IMPORTED_MODULE_0__["toRadians"])(this.heelAngle)));
+      var moveAmt = sailorSpeed * dt;
       if (this.heelAngle > 0) moveAmt *= -1;
       if (Math.abs(this.heelAngle) > 1) this.sailorPosition += moveAmt;
 

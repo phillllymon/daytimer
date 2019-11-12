@@ -47,33 +47,25 @@ class SternDiagram extends React.Component {
         ctx.translate(150, 300);
         
         let heelAngle = toRadians(boat.heelAngle);
-        let floatAmt = 25 * Math.sin(Math.abs(heelAngle));
+        let floatAmt = 20 * Math.sin(Math.abs(heelAngle));
         ctx.translate(0, -1 * floatAmt);
         ctx.rotate(heelAngle);
 
-        //hull
-        ctx.beginPath();
-        ctx.fillStyle = 'brown';
-        ctx.arc(-20, -20, 40, Math.PI / 2, Math.PI, false);
-        ctx.lineTo(20, -20);
-        ctx.arc(20, -20, 40, 0, Math.PI / 2);
-        ctx.fill();
-
-        /////////ROTATION POINT!
-        // ctx.beginPath();
-        // ctx.fillStyle = 'orange';
-        // ctx.arc(0, 0, 10, 2 * Math.PI, 0, false);
-        // ctx.fill();
-
-        //centerboard
-        ctx.beginPath();
-        ctx.fillStyle = 'black';
-        ctx.moveTo(-2, 20);
-        ctx.fillRect(-2, 20, 4, 60);
-        ctx.fill();
+        let headLower = 0;
+        let buttPosition = boat.sailorPosition;
+        if (Math.abs(buttPosition) > 45) {
+            let extra = Math.abs(buttPosition) - 50;
+            if (extra > 24) {
+                extra = 24;
+            }
+            headLower = 25 - Math.sqrt(625 - (extra * extra));
+            buttPosition = (buttPosition > 0 ? 50 : -50);
+        }
+        let poop = Math.sqrt(-1);
 
         //mast
         ctx.beginPath();
+        ctx.fillStyle = 'black';
         ctx.moveTo(-2, -290);
         ctx.fillRect(-2, -290, 4, 270);
         ctx.fill();
@@ -96,13 +88,53 @@ class SternDiagram extends React.Component {
         ctx.lineTo(boomDist, -50);
         ctx.stroke();
 
-        //sailor
+        //sailor legs
+        let legLength = 27;
+        let a = buttPosition / 2;
+        let b = Math.sqrt((legLength * legLength) - (a * a));
+        ctx.beginPath();
+        ctx.lineWidth = 10;
+        ctx.strokeStyle = 'orange';
+        ctx.lineCap = 'round';
+        ctx.moveTo(0, -20);
+        console.log(a);
+        ctx.lineTo(0 + a, -20 - b);
+        ctx.lineTo(buttPosition, -20);
+        ctx.stroke();
+
+        //sailor body
+        ctx.beginPath();
+        ctx.moveTo(buttPosition, -25);
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = 18;
+        ctx.lineCap = 'round';
+        ctx.lineTo(boat.sailorPosition, -57 + headLower);
+        ctx.stroke();
+        ctx.lineCap = 'butt';
+
+        //sailor head
         ctx.beginPath();
         ctx.fillStyle = 'orange';
-        ctx.arc(boat.sailorPosition, -40, 10, 2 * Math.PI, 0, false);
+        ctx.arc(boat.sailorPosition, -75 + headLower, 9, 2 * Math.PI, 0, false);
         ctx.fill();
 
-        makeInArrow(ctx, boat.sailorOffset, -40, Math.PI - heelAngle, 30, boat.sailorWeight, 8, 'black');
+        //hull
+        ctx.beginPath();
+        ctx.fillStyle = 'brown';
+        ctx.arc(-20, -20, 40, Math.PI / 2, Math.PI, false);
+        ctx.lineTo(20, -20);
+        ctx.arc(20, -20, 40, 0, Math.PI / 2);
+        ctx.fill();
+
+        //centerboard
+        ctx.beginPath();
+        ctx.fillStyle = 'black';
+        ctx.moveTo(-2, 20);
+        ctx.fillRect(-2, 20, 4, 60);
+        ctx.fill();
+
+        //sailor force
+        makeInArrow(ctx, 0.8 * boat.sailorOffset, -40, Math.PI - heelAngle, 60, boat.sailorWeight, 8, 'black');
         
         ctx.rotate(-1 * heelAngle);
         ctx.translate(0, floatAmt);
@@ -121,11 +153,9 @@ class SternDiagram extends React.Component {
             makeInArrow(ctx, -30, boat.boardOffset, -Math.PI / 2, 60, boardHeelForce, 8, 'red');
         }
 
-        //righting forces
+        //righting forces ALSO SAILOR FORCE ABOVE!!!
         let buoyancyForce = model.buoyancyForce;
         makeInArrow(ctx, (-1 * boat.buoyancyOffset), -30, 0, 70, buoyancyForce, 8, 'green');
-        
-
 
         //translate back
         ctx.translate(-150, -300);
