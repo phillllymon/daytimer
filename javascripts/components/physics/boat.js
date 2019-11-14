@@ -32,9 +32,9 @@ class Boat {
         //initial component positions
         this.sailorPosition = 0;
         this.rudderAngle = 0;
-        this.sailAngle = 0;
+        this.sailAngle = 60;
         this.heelAngle = 0;
-        this.mainSheetPos = 20;         //max |angle| of sail (sheet position)
+        this.mainSheetPos = 60;         //max |angle| of sail (sheet position)
         this.tack = 'starboard';
 
         //initial values
