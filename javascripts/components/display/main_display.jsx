@@ -6,7 +6,8 @@ import {
 } from '../util/vector_util';
 import {
     drawForceArrows,
-    makeStreamRipple
+    makeStreamRipple,
+    makeInArrow
 } from './canvas_helper';
 
 class MainDisplay extends React.Component {
@@ -42,6 +43,74 @@ class MainDisplay extends React.Component {
         this.centerBoat = this.centerBoat.bind(this);
         this.toggleArrow = this.toggleArrow.bind(this);
         this.setArrowColor = this.setArrowColor.bind(this);
+
+        this.state = {
+            intro: 1
+        };
+    }
+
+    introPopup() {
+        if (this.state.intro) {
+            switch (this.state.intro) {
+                case 1:
+                    return (
+                        <div className="intro">
+                            <center>
+                                Welcome to Wind & Waves!
+                                <br />
+                                <br />
+                                Sail your boat around using WASD for controls:
+                                <br />
+                                -steer with A and D
+                                <br />
+                                -W to let your sail out
+                                <br />
+                                -S to pull your sail in
+                                <br />
+                                <br />
+                                <button 
+                                    className="intro_button"
+                                    onClick={() => this.setState({intro: 2})}
+                                >
+                                    OK, got it
+                                </button>
+                            </center>
+                        </div>
+                    );
+                case 2:
+                    return (
+                        <div className="intro" style={{'top': '25', 'transform': 'translate(-50%, 0)', 'paddingTop': '5px'}}>
+                            <center>                  
+                                {'\u2B06'}              
+                                <br/>
+                                Use the buttons along the top of this display to see <br/>the different forces acting on your boat:
+                                <br/>
+                                <br/>
+                                -click the buttons to toggle force arrows
+                                <br/>
+                                -you can also set the color of each arrow
+                                <br />
+                                <br />
+                                <button
+                                    className="intro_button"
+                                    onClick={() => {
+                                        this.setState({ intro: false });
+                                        this.centerBoat();
+                                    }}
+                                >
+                                    OK, sail now
+                                </button>
+                            </center>
+                        </div>
+                    );
+                default:
+                    return (
+                        <div>
+                        </div>
+                    );
+            }
+            
+        }
     }
 
     toggleArrow(e) {
@@ -144,12 +213,7 @@ class MainDisplay extends React.Component {
         ctx.translate(-(pos[0]), -(pos[1]));
 
         //display true wind
-        let trueVec = windMap.getWindVector();
-        ctx.beginPath();
-        ctx.arc(40, 40, 2, 0, 2 * Math.PI, true);
-        ctx.moveTo(40, 40);
-        ctx.lineTo(40 + trueVec[0], 40 + trueVec[1]);
-        ctx.stroke();
+        makeInArrow(ctx, 600, 150, Math.PI, 100, 100, 10, 'lightblue');
 
     }
 
@@ -160,6 +224,21 @@ class MainDisplay extends React.Component {
                     style={{'position' : 'fixed', 'top' : '30', 'left' : '310'}}
                     onClick={this.centerBoat}>re-center boat
                 </button>
+                <button
+                    style={{ 'position': 'fixed', 'top': '30', 'left': '420' }}
+                    onClick={() => this.setState({intro: 1})}>see intro again
+                </button>
+                <div
+                    style={{
+                        'position': 'fixed',
+                        'top': '30',
+                        'left': '855',
+                        'color': 'lightblue'
+                    }}
+                >
+                    TRUE WIND
+                </div>
+                {this.introPopup()}
                 {
                     Object.keys(this.arrows).map((key, idx) => {
                         return (

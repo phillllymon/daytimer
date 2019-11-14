@@ -13,7 +13,7 @@ class Boat {
         //PARTS
         this.sail = new Foil(0.8, 0.4, 0.1);        //0.8, 0.4, 0.1
         this.centerBoard = new Foil(4, 1, 0);       //4, 1, 0
-        this.hull = new Foil(0, 0, 3);              //0, 0, 1
+        this.hull = new Foil(0, 0, 1);              //0, 0, 1
 
         //PHYSICAL CONSTANTS
         this.mass = 5;
@@ -61,6 +61,9 @@ class Boat {
 
     updateHeelAngle(dt) {
         this.heelAngle += (this.tippingVelocity * dt);
+        if (Math.abs(this.heelAngle) > 45) {
+            this.heelAngle = (this.heelAngle > 0 ? 45 : -45);
+        }
         let angleFactor = Math.cos(toRadians(Math.abs(this.heelAngle)));
         let zeroAngleFactor = Math.sin(toRadians(-1 * this.heelAngle));
         this.sailOffset = this.maxSailOffset * angleFactor;

@@ -61,7 +61,6 @@ class SternDiagram extends React.Component {
             headLower = 25 - Math.sqrt(625 - (extra * extra));
             buttPosition = (buttPosition > 0 ? 50 : -50);
         }
-        let poop = Math.sqrt(-1);
 
         //mast
         ctx.beginPath();
@@ -97,7 +96,6 @@ class SternDiagram extends React.Component {
         ctx.strokeStyle = 'orange';
         ctx.lineCap = 'round';
         ctx.moveTo(0, -20);
-        console.log(a);
         ctx.lineTo(0 + a, -20 - b);
         ctx.lineTo(buttPosition, -20);
         ctx.stroke();
@@ -139,18 +137,19 @@ class SternDiagram extends React.Component {
         ctx.rotate(-1 * heelAngle);
         ctx.translate(0, floatAmt);
         
+        let sideOffset = 50 * Math.sin(toRadians(boat.heelAngle));
         //heeling forces
         if (boat.tack === 'starboard') {
             let sailHeelForce = model.sailHeelForce;
-            makeInArrow(ctx, -30, (-1 * boat.sailOffset), -Math.PI / 2, 60, sailHeelForce, 8, 'red');
+            makeInArrow(ctx, -30 + (sideOffset * 1.5), (-1 * boat.sailOffset), -Math.PI / 2, 60, sailHeelForce, 8, 'red');
             let boardHeelForce = model.boardHeelForce;
-            makeInArrow(ctx, 30, boat.boardOffset, Math.PI / 2, 60, boardHeelForce, 8, 'red');
+            makeInArrow(ctx, 30 - sideOffset, boat.boardOffset, Math.PI / 2, 60, boardHeelForce, 8, 'red');
         }
         else {
             let sailHeelForce = model.sailHeelForce;
-            makeInArrow(ctx, 30, (-1 * boat.sailOffset), Math.PI / 2, 60, sailHeelForce, 8, 'red');
+            makeInArrow(ctx, 30 + (sideOffset * 1.5), (-1 * boat.sailOffset), Math.PI / 2, 60, sailHeelForce, 8, 'red');
             let boardHeelForce = model.boardHeelForce;
-            makeInArrow(ctx, -30, boat.boardOffset, -Math.PI / 2, 60, boardHeelForce, 8, 'red');
+            makeInArrow(ctx, -30 - sideOffset, boat.boardOffset, -Math.PI / 2, 60, boardHeelForce, 8, 'red');
         }
 
         //righting forces ALSO SAILOR FORCE ABOVE!!!

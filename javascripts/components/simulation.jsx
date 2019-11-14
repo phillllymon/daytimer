@@ -1,6 +1,7 @@
 import React from 'react';
 import TopDiagram from './display/top_diagram';
 import MainDisplay from './display/main_display';
+import GameDisplay from './display/game_display';
 import SternDiagram from './display/stern_diagram';
 import InputManager from './util/input_manager';
 import Model from './physics/model';
@@ -14,10 +15,12 @@ class Simulation extends React.Component {
         this.windMap = new WindMap(1200, 800);
         this.model = new Model(new Boat, this.windMap);
         this.state = {
-            model: this.model
+            model: this.model,
+            mode: 'simulation'
         }
         this.startSimulation = this.startSimulation.bind(this);
         this.mainLoop = this.mainLoop.bind(this);
+        this.showCorrectDisplay = this.showCorrectDisplay.bind(this);
     }
 
     componentDidMount() {
@@ -46,6 +49,37 @@ class Simulation extends React.Component {
         window.requestAnimationFrame(this.mainLoop);
     }
 
+    showCorrectDisplay() {
+        switch (this.state.mode) {
+            case 'simulation':
+                return (
+                    <div>
+                        <MainDisplay
+                            model={this.state.model}
+                            boat={this.state.model.boat}
+                            windMap={this.state.model.windMap}
+                        />
+                    </div>
+                );
+            case 'game':
+                return (
+                    <div>
+                        <GameDisplay
+                            model={this.state.model}
+                            boat={this.state.model.boat}
+                            windMap={this.state.model.windMap}
+                        />
+                    </div>
+                );
+            default:
+                return (
+                    <div>
+                        mode not set
+                    </div>
+                );
+        }
+    }
+
     render () {
         return (
             <div style={{'display' : 'flex'}}>
@@ -57,23 +91,7 @@ class Simulation extends React.Component {
                         model={this.state.model}
                     />
                 </div>
-                <MainDisplay
-                    model={this.state.model}
-                    boat={this.state.model.boat}
-                    windMap={this.state.model.windMap}
-                />
-                heading: {Math.round(this.state.model.boat.heading)}
-                <br/>
-                speed: {Math.round(this.state.model.boat.speed)}
-                <br />
-                windspeed: {Math.round(this.state.model.windMap.windSpeed)}
-                <br />
-                dragOnSail: x: {Math.round(this.state.model.dragOnSail[0]) + 
-                    ' y: ' + Math.round(this.state.model.dragOnSail[1])}
-                <br />
-                angle of attack: {Math.round(this.state.model.boat.angleOfAttack)}
-                <br />
-                sailAngle: {Math.round(this.state.model.boat.sailAngle)}
+                {this.showCorrectDisplay()}
             </div>
         );
     }
