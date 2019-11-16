@@ -14,38 +14,16 @@ class GameDisplay extends React.Component {
         super(props);
         this.width = 1200;
         this.height = 800;
+        
+        this.rocksPattern = 'brown';
 
         this.arrows = {
             appWind: true,
-            sailLift: false,
-            dragOnSail: false,
-            sailForce: false,
-            boardLift: false,
-            boardDrag: false,
-            boardForce: false,
-            hullDrag: false,
-            totalForce: false,
         };
 
         this.arrowColors = {
             appWind: 'lightblue',
-            sailLift: 'green',
-            dragOnSail: 'red',
-            sailForce: 'black',
-            boardLift: 'green',
-            boardDrag: 'red',
-            boardForce: 'black',
-            hullDrag: 'red',
-            totalForce: 'black'
-        }
-
-      //  this.rocksImage = new Image();
-      //  this.rocksImage.src = "../../../assets/rocks.png";
-      //  this.rocksImage.onload = () => {console.log('poop');};
-        this.rocks = [
-            [20, 20, 60, 60],
-            [160, 160, 200, 200]
-        ];
+        };
 
         this.toggleArrow = this.toggleArrow.bind(this);
         this.setArrowColor = this.setArrowColor.bind(this);
@@ -64,6 +42,12 @@ class GameDisplay extends React.Component {
 
     componentDidMount() {
         this.ctx = this.refs.canvas.getContext('2d');
+        this.rocksImage = new Image();
+        this.rocksImage.src = "./rock.png";
+        this.rocksImage.onload = () => {
+            this.rocksPattern = this.ctx.createPattern(this.rocksImage, "repeat");
+            this.imageReady = true;
+        };
         this.drawModel();
     }
 
@@ -87,6 +71,7 @@ class GameDisplay extends React.Component {
         let boat = this.props.boat;
         let ctx = this.ctx;
         let pos = boat.position;
+
         //translate to boat
         ctx.translate(-pos[0], -pos[1]);
         ctx.translate(this.width / 2, this.height / 2);
@@ -115,11 +100,13 @@ class GameDisplay extends React.Component {
         let boat = this.props.boat;
         let ctx = this.ctx;
         let pos = boat.position;
+        let rocks = this.props.game.rocks;
+
         //translate to boat
         ctx.translate(-pos[0], -pos[1]);
         ctx.translate(this.width / 2, this.height / 2);
-        // ctx.fillStyle = ctx.createPattern(this.rocksImage, "repeat");
-        this.rocks.forEach((rock) => {
+        ctx.fillStyle = this.rocksPattern;
+        rocks.forEach((rock) => {
             ctx.fillRect(rock[0], rock[1], (rock[2] - rock[0]), (rock[3] - rock[1]));
         });
 
@@ -205,15 +192,6 @@ class GameDisplay extends React.Component {
     render() {
         return (
             <div style={{'position': 'relative'}}>
-                <div className="rocks"
-                style={{
-                    'top': `${100 - this.props.boat.position[1]}px`,
-                    'left': `${100 - this.props.boat.position[0]}px`,
-                    'height': '90px',
-                    'width': '90px',
-                    'zIndex': '3'
-                }}></div>
-                
                 <canvas ref="canvas"
                     width="1200px"
                     height="800px"

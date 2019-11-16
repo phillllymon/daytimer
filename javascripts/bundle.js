@@ -437,32 +437,13 @@ function (_React$Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(GameDisplay).call(this, props));
     _this.width = 1200;
     _this.height = 800;
+    _this.rocksPattern = 'brown';
     _this.arrows = {
-      appWind: true,
-      sailLift: false,
-      dragOnSail: false,
-      sailForce: false,
-      boardLift: false,
-      boardDrag: false,
-      boardForce: false,
-      hullDrag: false,
-      totalForce: false
+      appWind: true
     };
     _this.arrowColors = {
-      appWind: 'lightblue',
-      sailLift: 'green',
-      dragOnSail: 'red',
-      sailForce: 'black',
-      boardLift: 'green',
-      boardDrag: 'red',
-      boardForce: 'black',
-      hullDrag: 'red',
-      totalForce: 'black'
-    }; //  this.rocksImage = new Image();
-    //  this.rocksImage.src = "../../../assets/rocks.png";
-    //  this.rocksImage.onload = () => {console.log('poop');};
-
-    _this.rocks = [[20, 20, 60, 60], [160, 160, 200, 200]];
+      appWind: 'lightblue'
+    };
     _this.toggleArrow = _this.toggleArrow.bind(_assertThisInitialized(_this));
     _this.setArrowColor = _this.setArrowColor.bind(_assertThisInitialized(_this));
     _this.drawWater = _this.drawWater.bind(_assertThisInitialized(_this));
@@ -483,7 +464,17 @@ function (_React$Component) {
   }, {
     key: "componentDidMount",
     value: function componentDidMount() {
+      var _this2 = this;
+
       this.ctx = this.refs.canvas.getContext('2d');
+      this.rocksImage = new Image();
+      this.rocksImage.src = "./rock.png";
+
+      this.rocksImage.onload = function () {
+        _this2.rocksPattern = _this2.ctx.createPattern(_this2.rocksImage, "repeat");
+        _this2.imageReady = true;
+      };
+
       this.drawModel();
     }
   }, {
@@ -537,12 +528,13 @@ function (_React$Component) {
     value: function drawRocks() {
       var boat = this.props.boat;
       var ctx = this.ctx;
-      var pos = boat.position; //translate to boat
+      var pos = boat.position;
+      var rocks = this.props.game.rocks; //translate to boat
 
       ctx.translate(-pos[0], -pos[1]);
-      ctx.translate(this.width / 2, this.height / 2); // ctx.fillStyle = ctx.createPattern(this.rocksImage, "repeat");
-
-      this.rocks.forEach(function (rock) {
+      ctx.translate(this.width / 2, this.height / 2);
+      ctx.fillStyle = this.rocksPattern;
+      rocks.forEach(function (rock) {
         ctx.fillRect(rock[0], rock[1], rock[2] - rock[0], rock[3] - rock[1]);
       }); //translate back
 
@@ -592,7 +584,7 @@ function (_React$Component) {
   }, {
     key: "mainControls",
     value: function mainControls() {
-      var _this2 = this;
+      var _this3 = this;
 
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         style: {
@@ -603,10 +595,10 @@ function (_React$Component) {
           key: idx
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_arrow_button__WEBPACK_IMPORTED_MODULE_1__["default"], {
           arrow: key,
-          active: _this2.arrows[key],
-          color: _this2.arrowColors[key],
-          setArrowColor: _this2.setArrowColor,
-          toggleArrow: _this2.toggleArrow
+          active: _this3.arrows[key],
+          color: _this3.arrowColors[key],
+          setArrowColor: _this3.setArrowColor,
+          toggleArrow: _this3.toggleArrow
         }));
       }));
     }
@@ -617,16 +609,7 @@ function (_React$Component) {
         style: {
           'position': 'relative'
         }
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "rocks",
-        style: {
-          'top': "".concat(100 - this.props.boat.position[1], "px"),
-          'left': "".concat(100 - this.props.boat.position[0], "px"),
-          'height': '90px',
-          'width': '90px',
-          'zIndex': '3'
-        }
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("canvas", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("canvas", {
         ref: "canvas",
         width: "1200px",
         height: "800px"
@@ -861,7 +844,7 @@ function (_React$Component) {
       ctx.rotate(-dir);
       ctx.translate(-pos[0], -pos[1]); //display true wind
 
-      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_3__["makeInArrow"])(ctx, 600, 150, Math.PI, 100, 100, 10, 'lightblue');
+      Object(_canvas_helper__WEBPACK_IMPORTED_MODULE_3__["makeInArrow"])(ctx, 600, 170, Math.PI, 100, 100, 10, 'lightblue');
     }
   }, {
     key: "mainControls",
@@ -897,7 +880,13 @@ function (_React$Component) {
           'left': '855',
           'color': 'lightblue'
         }
-      }, "TRUE WIND"), this.introPopup(), Object.keys(this.arrows).map(function (key, idx) {
+      }, "TRUE WIND"), this.introPopup(), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        style: {
+          'position': 'fixed',
+          'display': 'flex',
+          'backgroundColor': 'white'
+        }
+      }, Object.keys(this.arrows).map(function (key, idx) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           key: idx
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_arrow_button__WEBPACK_IMPORTED_MODULE_1__["default"], {
@@ -907,7 +896,7 @@ function (_React$Component) {
           setArrowColor: _this3.setArrowColor,
           toggleArrow: _this3.toggleArrow
         }));
-      }));
+      })));
     }
   }, {
     key: "centerBoat",
@@ -1352,6 +1341,51 @@ function (_React$Component) {
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
 
 /* harmony default export */ __webpack_exports__["default"] = (TopDiagram);
+
+/***/ }),
+
+/***/ "./javascripts/components/game/game.js":
+/*!*********************************************!*\
+  !*** ./javascripts/components/game/game.js ***!
+  \*********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Game =
+/*#__PURE__*/
+function () {
+  function Game(model) {
+    _classCallCheck(this, Game);
+
+    this.level = 1;
+    this.model = model;
+    this.rocks = [[30, 30, 60, 60], [180, 180, 210, 210]];
+  }
+
+  _createClass(Game, [{
+    key: "update",
+    value: function update() {
+      this.checkForRockCollisions();
+    }
+  }, {
+    key: "checkForRockCollisions",
+    value: function checkForRockCollisions() {
+      this.rocks.forEach(function (rock) {});
+    }
+  }]);
+
+  return Game;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (Game);
 
 /***/ }),
 
@@ -1996,6 +2030,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _physics_model__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./physics/model */ "./javascripts/components/physics/model.js");
 /* harmony import */ var _physics_boat__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./physics/boat */ "./javascripts/components/physics/boat.js");
 /* harmony import */ var _physics_wind_map__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./physics/wind_map */ "./javascripts/components/physics/wind_map.js");
+/* harmony import */ var _game_game__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./game/game */ "./javascripts/components/game/game.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -2024,6 +2059,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
 var Simulation =
 /*#__PURE__*/
 function (_React$Component) {
@@ -2038,6 +2074,7 @@ function (_React$Component) {
     _this.inputManager = new _util_input_manager__WEBPACK_IMPORTED_MODULE_5__["default"]();
     _this.windMap = new _physics_wind_map__WEBPACK_IMPORTED_MODULE_8__["default"](1200, 800);
     _this.model = new _physics_model__WEBPACK_IMPORTED_MODULE_6__["default"](new _physics_boat__WEBPACK_IMPORTED_MODULE_7__["default"](), _this.windMap);
+    _this.game = new _game_game__WEBPACK_IMPORTED_MODULE_9__["default"](_this.model);
     _this.state = {
       model: _this.model,
       mode: 'simulation'
@@ -2070,6 +2107,11 @@ function (_React$Component) {
     value: function mainLoop() {
       var dt = (Date.now() - this.lastTime) / 1000;
       this.model.update(this.inputManager.inputs, dt);
+
+      if (this.state.mode === 'game') {
+        this.game.update();
+      }
+
       this.setState({
         model: this.model
       });
@@ -2091,7 +2133,8 @@ function (_React$Component) {
           return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_display_game_display__WEBPACK_IMPORTED_MODULE_3__["default"], {
             model: this.state.model,
             boat: this.state.model.boat,
-            windMap: this.state.model.windMap
+            windMap: this.state.model.windMap,
+            game: this.game
           }));
 
         default:

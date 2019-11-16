@@ -213,7 +213,7 @@ class MainDisplay extends React.Component {
         ctx.translate(-(pos[0]), -(pos[1]));
 
         //display true wind
-        makeInArrow(ctx, 600, 150, Math.PI, 100, 100, 10, 'lightblue');
+        makeInArrow(ctx, 600, 170, Math.PI, 100, 100, 10, 'lightblue');
 
     }
 
@@ -239,6 +239,7 @@ class MainDisplay extends React.Component {
                     TRUE WIND
                 </div>
                 {this.introPopup()}
+                <div style={{'position': 'fixed', 'display': 'flex', 'backgroundColor': 'white'}}>
                 {
                     Object.keys(this.arrows).map((key, idx) => {
                         return (
@@ -255,6 +256,7 @@ class MainDisplay extends React.Component {
                 
                     })
                 }
+                </div>
             </div>
         );
     }

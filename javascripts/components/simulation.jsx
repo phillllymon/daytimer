@@ -7,6 +7,7 @@ import InputManager from './util/input_manager';
 import Model from './physics/model';
 import Boat from './physics/boat';
 import WindMap from './physics/wind_map';
+import Game from './game/game';
 
 class Simulation extends React.Component {
     constructor(props) {
@@ -14,6 +15,7 @@ class Simulation extends React.Component {
         this.inputManager = new InputManager();
         this.windMap = new WindMap(1200, 800);
         this.model = new Model(new Boat, this.windMap);
+        this.game = new Game(this.model);
         this.state = {
             model: this.model,
             mode: 'simulation'
@@ -41,6 +43,9 @@ class Simulation extends React.Component {
         const dt = (Date.now() - this.lastTime) / 1000;
 
         this.model.update(this.inputManager.inputs, dt);
+        if (this.state.mode === 'game') {
+            this.game.update();
+        }
         this.setState({
             model: this.model
         });
@@ -68,6 +73,7 @@ class Simulation extends React.Component {
                             model={this.state.model}
                             boat={this.state.model.boat}
                             windMap={this.state.model.windMap}
+                            game={this.game}
                         />
                     </div>
                 );
