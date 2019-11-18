@@ -27,7 +27,9 @@ class Simulation extends React.Component {
 
     componentDidMount() {
         this.inputManager.startListening();
-        this.startSimulation();
+        setTimeout( () => {
+            this.startSimulation();
+        }, 1000);
     }
 
     componentWillUnmount() {

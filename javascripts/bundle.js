@@ -2088,8 +2088,12 @@ function (_React$Component) {
   _createClass(Simulation, [{
     key: "componentDidMount",
     value: function componentDidMount() {
+      var _this2 = this;
+
       this.inputManager.startListening();
-      this.startSimulation();
+      setTimeout(function () {
+        _this2.startSimulation();
+      }, 1000);
     }
   }, {
     key: "componentWillUnmount",
