@@ -866,7 +866,7 @@ function (_React$Component) {
         style: {
           'position': 'fixed',
           'top': '30',
-          'left': '420'
+          'left': '440'
         },
         onClick: function onClick() {
           return _this3.setState({

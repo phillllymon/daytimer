@@ -225,7 +225,7 @@ class MainDisplay extends React.Component {
                     onClick={this.centerBoat}>re-center boat
                 </button>
                 <button
-                    style={{ 'position': 'fixed', 'top': '30', 'left': '420' }}
+                    style={{ 'position': 'fixed', 'top': '30', 'left': '440' }}
                     onClick={() => this.setState({intro: 1})}>see intro again
                 </button>
                 <div
