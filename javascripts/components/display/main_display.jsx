@@ -88,7 +88,7 @@ class MainDisplay extends React.Component {
                                 <br/>
                                 -click the buttons to toggle force arrows
                                 <br/>
-                                -you can also set the color of each arrow
+                                -click the colored circle to set that arrow's color
                                 <br />
                                 <br />
                                 <button
