@@ -37,6 +37,7 @@ export function secondsToString(seconds) {
     if (minutes < 10) {
         minutes = "0" + minutes;
     }
+    timeLeft %= 60;
     if (timeLeft < 10) {
         timeLeft = "0" + timeLeft;
     }
