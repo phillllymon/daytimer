@@ -1,11 +1,10 @@
 import React from 'react';
-import Simulation from './simulation';
-
+import Timer from './timer.js';
 
 const Root = () => {
     return (
         <div>
-            <Simulation />
+            <Timer />
         </div>
     );
 }

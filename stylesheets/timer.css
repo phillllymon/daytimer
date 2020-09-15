@@ -1,0 +1,121 @@
+.task_list {
+
+}
+
+.task_list_item {
+  display: flex;
+  flex-direction: row;
+}
+
+.task_button {
+  width: 200px;
+  text-align: center;
+  cursor: pointer;
+  background-color: darkgray;
+  border-top: 2px solid lightgray;
+  border-left: 2px solid lightgray;
+  border-right: 2px solid gray;
+  border-bottom: 2px solid gray;
+  margin: 2px;
+}
+
+.task_button:active {
+  border-bottom: 2px solid lightgray;
+  border-right: 2px solid lightgray;
+  border-left: 2px solid gray;
+  border-top: 2px solid gray;
+  background-color: orange;
+}
+
+.current_task_button {
+  cursor: default;
+  border-bottom: 2px solid lightgray;
+  border-right: 2px solid lightgray;
+  border-left: 2px solid gray;
+  border-top: 2px solid gray;
+  background-color: orange;
+}
+
+.close_X {
+  width: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: red;
+}
+
+.new_task_field {
+  width: 196px;
+  margin: 2px;
+}
+
+.add_task_plus {
+  width: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: green;
+  font-size: 150%;
+  margin-bottom: 2px;
+}
+
+.category_boxes {
+  display: flex;
+  flex-direction: row;
+}
+
+.category_box {
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  margin-left: 20px;
+  margin-right: 2px;
+  margin-top: 4px;
+  border-bottom: 2px solid lightgray;
+  border-right: 2px solid lightgray;
+  border-left: 2px solid gray;
+  border-top: 2px solid gray;
+  color: white;
+  overflow: hidden;
+}
+
+.active_category_box {
+  color: black;
+  overflow: visible;
+}
+
+.top_row{
+  display: flex;
+  flex-direction: row;
+}
+
+.task_list_title {
+  width: 206px;
+  text-align: center;
+}
+
+.close_cat_box {
+  cursor: pointer;
+  color: red;
+  margin-left: 20px;
+  width: 21px;
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+.catagory_title {
+  display: flex;
+  flex-direction: row;
+}
+
+.add_cat_plus {
+  cursor: pointer;
+  color: green;
+  margin-left: 20px;
+  width: 21px;
+  text-align: center;
+  margin-bottom: 5px;
+  font-size: 150%;
+}
